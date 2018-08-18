@@ -433,47 +433,45 @@
             async _getData(e) {
                 await this.contentAttached;
                 try {
-                    if(!this.isViewAudios) {
-                        if (e === this.query && this.query !== undefined) {
-                            this.page = 0;
-                            this.loading = true;
-                            this.set('list', []);
-                        } else {
-                            this.loadingMore = true;
-                        }
-
-                        let receivedData = [];
-                       
-                        if(this.query.length === 0) {
-                            receivedData = await acFetch('/user/recordings' , {
-                                page: this.page
-                            }) ; 
-                        }
-                        else{
-                            receivedData = await acFetch('/query/user/recordings' , {
-                                query: this.query, 
-                                page: this.page
-                            }) ; 
-                        }
-                        // --------------- GUI bug fix ----------------------
-                        this.loading = false ; 
-                        this.loadingToGUI = true ; 
-                        await sleep(50);
-                        // --------------------------------------------------
-                        if(receivedData === undefined)
-                            this.set('list', []) ; 
-                        else 
-                            this.set('list', this.list.concat(receivedData));
-
-                        if (receivedData !== undefined && receivedData.length === app_elementsPerPage)
-                            this.$.baseLayout.onReceivedData();
-
-                        localStorage.removeItem('update/collection' + this.query);
-                        localStorage.removeItem('update/recent');
-                        this.loadingMore = false;
-                        this.loadingToGUI = false ;
-                        this.page++;
+                    if (e === this.query && this.query !== undefined) {
+                        this.page = 0;
+                        this.loading = true;
+                        this.set('list', []);
+                    } else {
+                        this.loadingMore = true;
                     }
+
+                    let receivedData = [];
+                    
+                    if(this.query.length === 0) {
+                        receivedData = await acFetch('/user/recordings' , {
+                            page: this.page
+                        }) ; 
+                    }
+                    else{
+                        receivedData = await acFetch('/query/user/recordings' , {
+                            query: this.query, 
+                            page: this.page
+                        }) ; 
+                    }
+                    // --------------- GUI bug fix ----------------------
+                    this.loading = false ; 
+                    this.loadingToGUI = true ; 
+                    await sleep(50);
+                    // --------------------------------------------------
+                    if(receivedData === undefined)
+                        this.set('list', []) ; 
+                    else 
+                        this.set('list', this.list.concat(receivedData));
+
+                    if (receivedData !== undefined && receivedData.length === app_elementsPerPage)
+                        this.$.baseLayout.onReceivedData();
+
+                    localStorage.removeItem('update/collection' + this.query);
+                    localStorage.removeItem('update/recent');
+                    this.loadingMore = false;
+                    this.loadingToGUI = false ;
+                    this.page++;
                 }    
                 catch(e){
                     console.log(e);

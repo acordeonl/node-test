@@ -37,12 +37,13 @@
             :host{
                 --theme-color1: #ffab40 ;
                 --theme-color2: #ffab40 ;
-                --background-color0:#ffab40 ; 
+                --background-color0:#ffabg40 ; 
                 --content-background:white ; 
                 --background-color1:#ffab40 ; 
                 --card-color:blue ; 
-                --content-color2:black; 
-                --content-color:black ;
+                --title-color:gray ; 
+                --content-color2:rgb(70, 69, 69); 
+                --content-color:rgb(70, 69, 69) ;
                 --paper-icon-color:white;
                 --height: 65%;
                 --width: 35%;
@@ -98,6 +99,7 @@
         </div>
         <script>
             app_elementsPerPage = 10 ; 
+            var sleep = n => new Promise(resolve => setTimeout(resolve, n)); 
         </script>
     </template>
     <script>
