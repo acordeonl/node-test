@@ -83,10 +83,14 @@
                 font-weight: 300;
             };
         }  
+        #loginResponse{
+            visibility: hidden ; 
+        }
     </style>
 </head>
 
 <body>
+    <div id='loginResponse'><%= response %></div>
     <div wrapper>
         <div content >
             <div title> ADMIN LOGIN</div>
@@ -99,7 +103,11 @@
         </div>
        
     </div>
-    
+    <script>
+        let loginResponse = document.getElementById('loginResponse').innerHTML ; 
+        if(loginResponse === 'Unauthorized')
+            alert('Credenciales inválidas, por favor intenta nuevamente.') ; 
+    </script>
 </body>
 
 </html>

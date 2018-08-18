@@ -54,6 +54,13 @@
                 height:100px;
                 width:100%;
             }
+            paper-toast {
+                @apply --justify-text;
+                font-size: 20px;
+                margin-bottom: 5vh;
+                border-radius: 3px;
+                max-width: 65vw;
+            }
             body{
                 background-color: var(--background-color0) ;
                 font-family: 'Roboto', sans-serif;
@@ -146,6 +153,10 @@
                 color: gray ; 
             }
         </style>
+        <paper-toast id="toast"></paper-toast>
+        <paper-toast id="toastPersist" duration="0">
+            <paper-icon-button icon='close' on-click="_closeToastPersist"></paper-icon-button>
+        </paper-toast>
         <div dialogs>
             <prompt-dialog dialog-title="Regitrar Dato" id="createDialog" confirm-button="Registrar" cancel-button="cancelar">
                 <div content >
@@ -193,6 +204,18 @@
             constructor() {
                 super();
             }
+            async openToast (e) {
+                let toast = this.$.toast ; 
+                if(e.detail.persist) 
+                    toast = this.$.toastPersist  ;
+                if(toast.text === e.detail.msg && toast.opened)
+                    return ;
+
+                if(toast.opened)
+                    toast.close() ; 
+                toast.text = e.detail.msg;
+                toast.open();
+            }
             _openCreateDialog() {
                 this.$.createDialog.open();
             }
@@ -201,6 +224,21 @@
                 this.selectedBtn = e.currentTarget.id ; 
                 this.shadowRoot.querySelector('#'+this.selectedBtn).classList.add('selected') ; 
 
+            }
+            _closeToastPersist() {
+                this.$.toastPersist.toggle() ;     
+            }
+            async toastTest() {
+                this.openToast({
+                    detail:{
+                        msg:'prueba',
+                        persist:true
+                    },
+                })
+            }
+            ready() {
+                super.ready() ;
+                this.addEventListener('toast', e => this.openToast(e));
             }
         }
         customElements.define('web-app', WebApp);
