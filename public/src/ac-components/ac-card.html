@@ -47,6 +47,7 @@
                 }
                 [bottom] {
                     user-select: text ; 
+                    margin-top:0px ;
                     font-size: 20px;
                     font-weight: 500;
                     color: black;
@@ -67,6 +68,7 @@
                     padding-bottom:2px ;
                 }
                 [cardTitle] {
+                    margin-left:5px ;
                     font-weight: 400 ; 
                     opacity: 0.7 ; 
                     line-height: 1.5 ; 
@@ -149,7 +151,6 @@
                 [description] {
                     padding: 12px;
                     margin-right: 7px;
-                    margin-bottom: 5px;
                     user-select: text ; 
                     @apply --justify-text;
                     @apply --layout-horizontal;
@@ -231,79 +232,30 @@
                     <paper-ripple></paper-ripple>
                 </template>
                 <div top>
-                    <template is="dom-if" if="[[!isViewAudio]]">
-                        <span duration> duracion </span>
-                        <template is="dom-if" if="[[isDemo]]">
-                            <span cardTitle> titulo Demo </span>
-                        </template>
-                    </template>
-                    <template is="dom-if" if="[[isViewAudio]]">
-                        <iron-icon isViewAudio icon="av:volume-up"></iron-icon>
-                        <template is="dom-if" if="[[isDemo]]">
-                            <span cardTitle> titulo </span>
-                        </template>
-                    </template>
-                    
-                    <template is="dom-if" if="[[!isDemo]]">
-                        <span cardTitle> titlu </span>
-                    </template>
+                    <span cardTitle> {{cardTitle}} {{user}} </span>
                 </div>
-                <div middle>
-                    <iron-icon icon="social:person-outline"></iron-icon>
+                <div middle style='margin-left:10px'>
+                    <!-- <iron-icon icon="social:person-outline"></iron-icon> -->
                     {{user}}
                     &nbsp
                     <template is="dom-if" if="[[!isViewAudio]]">
-                        <iron-icon icon="image:remove-red-eye"></iron-icon>
+                        <!-- <iron-icon icon="image:remove-red-eye"></iron-icon> -->
                         <!-- {{acView}} -->
+                        {{acView}}
                     </template>
-                </div>
-            </div>
-            <div bottom>
-                <div tags >
-                    <template is="dom-if" if="[[!isViewAudio]]">
-                        <span tag style="opacity:0.8; font-weight: 400;"> {{acViewType}} </span>
-                    </template>
-                    <template id="domRepeat" list is="dom-repeat" items="{{_tagsShort(tags)}}" as="tag">
-                        <span tag>{{tag}}</span>
-                    </template>
-                </div>
-                <div info>
-                    <div style="width:41px; height:41px; margin-bottom: 10px ; ">
-                        <paper-icon-button main-icon id=[[icon1Id]] on-click='_action' more icon="expand-more"></paper-icon-button>
-                    </div>
-                </div>
-            </div>
-            <iron-collapse id="collapse">
-                <div details>
-                    <div cardInfo>
-                        <div tags style="margin-bottom: 20px;">
-                            <template id="domRepeat" list is="dom-repeat" items="{{_tagsLong(tags)}}" as="tag">
-                                <span tag>{{tag}}</span>
-                            </template>
-                        </div>
-                        <div property>
-                            <span bold>{{t('date')}}:</span>&nbsp{{_formatDate(date)}}
-                        </div>
-                        <template is="dom-if" if="[[!isViewAudio]]">
-                            <div property>
-                            </div>
-                        </template>
-                        <div property>
-                            <span bold>{{t2('license')}}:</span> &nbsp <span on-click='_openLicenseLink' id='licenseLink'>{{license}}</span> 
-                        </div>
-                    </div>
-                    <div extra-buttons>
-                        <template is="dom-if" if="[[icon2]]">
-                            <!-- <div style="width:41px; height:41px;"> -->
-                                <paper-icon-button  index="{{id}}" on-click='_action' id='[[icon2]]' icon='[[icon2]]' extra-icon></paper-icon-button>
-                            <!-- </div> -->
-                        </template>
-                    </div>
                 </div>
                 <div description>
                     {{description}}
                 </div>
-            </iron-collapse>
+            </div>
+            <div bottom>
+                <!-- <div info> -->
+                    <div style="width:41px; height:41px; margin-bottom: 10px ; ">
+                        <paper-icon-button main-icon id=[[icon1Id]] on-click='_action' more icon="icons:create"></paper-icon-button>
+                        <paper-icon-button  index="{{id}}" on-click='_action' id='[[icon2]]' icon='[[icon2]]' extra-icon></paper-icon-button>
+                    </div>
+                <!-- </div> -->
+            </div>
         </div>
     </template>
     <script>
@@ -327,7 +279,7 @@
                 description:{type:String},
                 cardId:{observer:'hideCollapse'},
                 open:{type:Boolean,value:false},
-                icon1Id: {type: String,value: 'expand-more'},
+                icon1Id: {type: String,value: 'icons:create'},
                 noClick:{type:Boolean,value:false},
                 icon1: {type: String},
                 icon2: {type: String},

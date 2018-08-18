@@ -28,6 +28,8 @@
     <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
     <link rel="import" href="./ac-components/animation-behaviors/ripple-to.html">
     <link rel="import" href="./ac-components/page-views/view-layout.html" >
+    <link rel="import" href="../bower_components/paper-button/paper-button.html">
+
 
 </imports>
 
@@ -54,7 +56,7 @@
             }
             body{
                 background-color: var(--background-color0) ;
-                background-color: red ;
+                font-family: 'Roboto', sans-serif;
             }
             [mobile] [container],
             [tablet] [container] {
@@ -90,12 +92,77 @@
                 left: 0;
                 height: 100%;
                 width: 100%;
+
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            [header]{
+                width:450px ;
+                margin-left:20px ;
+                @apply --layout-center;
+                @apply --layout-horizontal;
+                @apply --justified-center;
+                position: absolute ;
+            }
+            [select-entity]{
+                margin-top:20px ;
+                font-size: 20px ;
+            }
+            paper-button{
+                color:gray ; 
+                font-weight: 400 ;
+            }
+            .selected{
+                background-color: var(--theme-color1) ;
+                color:white ;
+            }
+            [footer]{
+                position:absolute ; 
+                bottom:30px ;
+                right:30px ;
+            }
+            [logout]{
+                position: absolute ;
+                top:20px ; 
+                color:gray ;
+                height:50px;
+                width:50px;
+                right:20px ;
+            }
+            [addEntity] {
+                margin-left: -10px;
+                margin-top: -20px;
+                margin-right: 12px;
+                color: white ; 
+                background-color:var(--theme-color1) ; 
+                height:70px;
+                width:70px;
+                border-radius: 100%;
+            }
+            [addEntity]:hover {
+                color: gray ; 
             }
         </style>
         <div wrapper>
-            <view-layout position='bottom' height='550px' width='450px'>
+            <view-layout position='bottom' height='580px' width='450px'>
                 <ns-entity> </ns-entity>
             </view-layout>
+            <div header>
+                <div select-entity>
+                    <paper-button id='studentBtn' class='selected'  on-click='_selectEntity' > Estudiante </paper-button>
+                    <paper-button id='teacherBtn' on-click='_selectEntity'  > Docente </paper-button>
+                    <paper-button id='courseBtn' on-click='_selectEntity'> Curso </paper-button>
+                </div>
+            </div>
+            <div footer>
+                <div >
+                    <paper-icon-button addEntity icon='icons:add'></paper-icon-button>
+                </div>
+            </div>
+            <div logout>
+                <paper-icon-button style='height:45px; width:45px;' icon='icons:exit-to-app'>  </paper-icon-button>
+            </div>
         </div>
         <script>
             app_elementsPerPage = 10 ; 
@@ -105,9 +172,17 @@
     <script>
         class WebApp extends Polymer.Element {
             static get is() { return 'web-app'; }
-            static get properties() {return {}}
+            static get properties() {return {
+                selectedBtn:{type:String,value:'studentBtn'},
+            }}
             constructor() {
                 super();
+            }
+            _selectEntity(e){
+                this.shadowRoot.querySelector('#'+this.selectedBtn).classList.remove('selected') ; 
+                this.selectedBtn = e.currentTarget.id ; 
+                this.shadowRoot.querySelector('#'+this.selectedBtn).classList.add('selected') ; 
+
             }
         }
         customElements.define('web-app', WebApp);
