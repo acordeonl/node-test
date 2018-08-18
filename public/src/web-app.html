@@ -98,6 +98,7 @@
                 align-items: center;
             }
             [header]{
+                height:12vh ;
                 width:450px ;
                 margin-left:20px ;
                 @apply --layout-center;
@@ -135,9 +136,10 @@
                 margin-top: -20px;
                 margin-right: 12px;
                 color: white ; 
-                background-color:var(--theme-color1) ; 
                 height:70px;
                 width:70px;
+                background-color: #ee9a2b ;
+                @apply --shadow-elevation-3dp;
                 border-radius: 100%;
             }
             [addEntity]:hover {
@@ -158,7 +160,7 @@
             </prompt-dialog>
         </div>
         <div wrapper>
-            <view-layout position='bottom' height='580px' width='450px'>
+            <view-layout position='bottom' height='85vh' width='450px'>
                 <ns-entity> </ns-entity>
             </view-layout>
             <div header>
