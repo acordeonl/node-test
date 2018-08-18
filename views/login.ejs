@@ -96,14 +96,29 @@
             <div title> ADMIN LOGIN</div>
             
             <div instructions  style="margin-top:10px;"> 
-                <paper-input allowed-pattern="[A-Za-z0-9]+" maxlength='20' auto-validate label="Usuario"></paper-input>
-                <paper-input maxlength='30' label="Contraseña" type='password'></paper-input>
+                <paper-input id='user' allowed-pattern="[A-Za-z0-9]+" maxlength='20' auto-validate label="Usuario"></paper-input>
+                <paper-input id='pass' maxlength='30' label="Contraseña" type='password'></paper-input>
             </div>
-            <paper-button style='margin-top:30px;'>Login</paper-button>
+            <paper-button onclick='userLogin()' style='margin-top:30px;'>Login</paper-button>
         </div>
        
     </div>
     <script>
+        function userLogin(){
+            let user = document.getElementById('user').value ; 
+            let pass = document.getElementById('pass').value ; 
+            if(user.length === 0)
+                alert('Por favor ingresar usuario') ; 
+            else if(pass.length === 0)
+                alert('Por favor ingresar contraseña') ; 
+            else 
+                console.log(user,pass);
+        }
+        function checkForEnter(e) {
+            if (e.keyCode === 13) 
+                this.userLogin() ; 
+        }
+        this.addEventListener('keydown', e => checkForEnter(e));
         let loginResponse = document.getElementById('loginResponse').innerHTML ; 
         if(loginResponse === 'Unauthorized')
             alert('Credenciales inválidas, por favor intenta nuevamente.') ; 
