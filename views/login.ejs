@@ -104,15 +104,23 @@
        
     </div>
     <script>
-        function userLogin(){
+        async function userLogin(){
             let user = document.getElementById('user').value ; 
             let pass = document.getElementById('pass').value ; 
             if(user.length === 0)
                 alert('Por favor ingresar usuario') ; 
             else if(pass.length === 0)
                 alert('Por favor ingresar contraseña') ; 
-            else 
-                console.log(user,pass);
+            else {
+                let body = {} ; 
+                body.user = user;
+                body.pass = pass;
+                response = await fetch('/auth' , {
+                    method: 'post',
+                    headers: new Headers({'Content-Type': 'application/json'}),
+                    body: JSON.stringify(body)
+                }) ; 
+            }
         }
         function checkForEnter(e) {
             if (e.keyCode === 13) 
