@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" async>
+    <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="manifest" href="/manifest.json">
+    <link rel="import" href="/bower_components/paper-input/paper-input.html">
+    <link rel="import" href="/bower_components/paper-button/paper-button.html">
+    <title>Inicio - Login</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            font-size: 18px; 
+            font-weight: 300;
+            background-color: #fffaf5;
+        }
+    </style>
+    <style layout>
+        [wrapper]{
+            margin: auto;
+            margin-top:70px ; 
+            background-color:white ; 
+           box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
+           0 1px 18px 0 rgba(0, 0, 0, 0.12),
+           0 3px 5px -1px rgba(0, 0, 0, 0.4);
+            width: 400px;
+            padding: 10px;
+            padding-bottom:40px ; 
+            border-radius: 3px;
+            
+        }
+        [content]{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column ;
+        }
+        [output]{
+            background-color: #E5E1DF ; 
+            border-radius: 3px;
+            width:80% ;
+            height:50px;
+            padding: 10px ; 
+        }
+        [instructions]{
+            width:80% ; 
+            text-align: justify;
+            text-justify: inter-word;
+        }
+        [title]{
+            margin-top:25px ; 
+            width:80% ; 
+            font-weight: 400 ; 
+            font-size: 20px ; 
+            color: gray ; 
+            text-align: center ; 
+        }
+        paper-button{
+            width:80% ;
+            color: white ; 
+            font-weight: 400 ;
+            background-color: #ffab40 ;
+        }
+        paper-input {
+            margin-top: 2px;
+            --paper-input-container-focus-color: #eb9627 ;
+            --paper-input-container-color: gray;
+            --paper-input-container-label: {
+                color: rgb(196, 196, 196) ;
+                font-size: 22px;
+                font-weight: 300;
+            };
+            --paper-input-container-input: {
+                color: gray;
+                font-size: 25px;
+                font-weight: 300;
+            };
+        }  
+    </style>
+</head>
+
+<body>
+    <div wrapper>
+        <div content >
+            <div title> ADMIN LOGIN</div>
+            
+            <div instructions  style="margin-top:10px;"> 
+                <paper-input allowed-pattern="[A-Za-z0-9]+" maxlength='20' auto-validate label="Usuario"></paper-input>
+                <paper-input maxlength='30' label="Contraseña" type='password'></paper-input>
+            </div>
+            <paper-button style='margin-top:30px;'>Login</paper-button>
+        </div>
+       
+    </div>
+    
+</body>
+
+</html>

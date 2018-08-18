@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var appLogic = require('./routes/v1');
+var main = require('./routes/main');
 
 var app = express();
 
@@ -31,6 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(function (req, res, next) { req.db = mongo_db ; next();})
 
 
+app.use('/', main);
 app.use('/v1', appLogic);
 
 

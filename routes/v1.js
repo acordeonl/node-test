@@ -2,6 +2,10 @@ var express = require('express');
 var fetch = require('node-fetch');
 var router = express.Router();
 
+var userAuth = require('../route-helpers/auth');
+var verifyUser =  userAuth.verifyUser ;
+
+
 router.post('/postTest', async function (req, res, next) {
     console.log(req.body.firstname);
     console.log(req.body.lastname);
