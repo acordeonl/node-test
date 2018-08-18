@@ -6,7 +6,7 @@ var logger = require('morgan');
 
 var appLogic = require('./routes/v1');
 var main = require('./routes/main');
-
+var session = require('client-sessions') ; 
 var app = express();
 
 var mongo = require('mongodb');
@@ -29,8 +29,31 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(function (req, res, next) { req.db = mongo_db ; next();})
+app.use(session({
+    cookieName:'session', 
+    secret:'4j3kljk43h2k4jh2k42hk42',
+    duration:30*60*1000, 
+})) ; 
 
+app.use(function (req, res, next) { req.db = mongo_db ; next();})
+app.use( async function(req,res,next){
+    try{
+        if(req.session && req.session.user){
+            let user = (await req.db.collection('Users').find({
+                username:req.session.user.username
+            }).toArray())[0];
+            if(user){
+                req.user = user ; 
+                delete req.user.password ;
+                req.session.user = user ; 
+            }
+            next() ; 
+        }   
+        else{
+            next() ; 
+        }
+    }catch(err){return next(err) ; }
+}) ; 
 
 app.use('/', main);
 app.use('/v1', appLogic);

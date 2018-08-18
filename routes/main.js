@@ -5,41 +5,43 @@ var userAuth = require('../route-helpers/auth');
 var verifyUser =  userAuth.verifyUser ;
 
 router.post('/login', async function (req, res, next) {
-    console.log('in login');
-    if(req.body.user === 'user' && req.body.pass === 'pass')
-        res.redirect('/dashboard') ; 
-    else if(req.body.user !== undefined)
+    if(req.body.username !== undefined && req.body.password !== undefined) {
+        let user = (await req.db.collection('Users').find({
+                username:req.body.username
+            }).toArray())[0];
+        if(user !== undefined && user.password === req.body.password){
+            req.session.user = user ; 
+            res.redirect('/dashboard') ; 
+        }
+        else{ 
+            res.render('login',{response:'Unauthorized'}) ; 
+        }
+    }
+    else if(req.body.username !== undefined)
         res.render('login',{response:'Unauthorized'}) ; 
     else 
         res.render('login',{response:''}) ; 
-    // try {
-    //     let response = (await req.db.collection('Users').find({
-    //         givenName: req.body.firstname
-    //     }).toArray())[0];
-    //     let getResponse = await fetch('http://localhost:3000/v1/getTest');
-    //     console.log(getResponse, response);
-    //     res.send(200);
-    //     // next() ;
-    // } catch (err) {
-    //     return next(err);
-    // }
 });
 
 router.get('/login', function (req, res, next) {
+    if(req.user)
+        res.redirect('/dashboard') ; 
     res.render('login' , {response:''}) ; 
 });
 
 
 router.get('/', function (req, res, next) {
+    if(req.user)
+        res.redirect('/dashboard') ; 
     res.redirect('/login');
 }) ; 
 
 router.get('/logout', function (req, res, next) {
-    console.log('in log out');
+    req.session.user = undefined ; 
     res.redirect('/login');
 }) ; 
 
-router.get('/dashboard', function (req, res, next) {
+router.get('/dashboard' , verifyUser,  function (req, res, next) {
     res.render('dashboard') ; 
 });
 
