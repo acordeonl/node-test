@@ -3,13 +3,21 @@ var router = express.Router();
 
 var userAuth = require('../route-helpers/auth');
 var verifyUser =  userAuth.verifyUser ;
+var bcrypt = require('bcryptjs') ;
+
+
+// router.get('/genHash', function (req, res, next) {
+//     var salt = bcrypt.genSaltSync(10)     ; 
+//     var hash = bcrypt.hashSync("pass", salt) ; 
+//     console.log(hash);
+// });
 
 router.post('/login', async function (req, res, next) {
     if(req.body.username !== undefined && req.body.password !== undefined) {
         let user = (await req.db.collection('Users').find({
                 username:req.body.username
             }).toArray())[0];
-        if(user !== undefined && user.password === req.body.password){
+        if(user !== undefined && bcrypt.compareSync(req.body.password,user.password)){
             req.session.user = user ; 
             res.redirect('/dashboard') ; 
         }
@@ -26,14 +34,16 @@ router.post('/login', async function (req, res, next) {
 router.get('/login', function (req, res, next) {
     if(req.user)
         res.redirect('/dashboard') ; 
-    res.render('login' , {response:''}) ; 
+    else
+        res.render('login' , {response:''}) ; 
 });
 
 
 router.get('/', function (req, res, next) {
     if(req.user)
         res.redirect('/dashboard') ; 
-    res.redirect('/login');
+    else 
+        res.redirect('/login');
 }) ; 
 
 router.get('/logout', function (req, res, next) {
