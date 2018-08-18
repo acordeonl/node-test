@@ -231,22 +231,42 @@
                 <template is="dom-if" if="[[!noClick]]" >
                     <paper-ripple></paper-ripple>
                 </template>
-                <div top>
-                    <span cardTitle> {{cardTitle}} {{user}} </span>
-                </div>
-                <div middle style='margin-left:10px'>
-                    <!-- <iron-icon icon="social:person-outline"></iron-icon> -->
-                    {{user}}
-                    &nbsp
-                    <template is="dom-if" if="[[!isViewAudio]]">
-                        <!-- <iron-icon icon="image:remove-red-eye"></iron-icon> -->
-                        <!-- {{acView}} -->
-                        {{acView}}
-                    </template>
-                </div>
-                <div description>
-                    {{description}}
-                </div>
+
+                <template is="dom-if" if="[[isCourse]]">
+                    <div top>
+                        <span cardTitle> {{courseName}} </span>
+                    </div>
+                    <div middle style='margin-left:10px'>
+                        <!-- <iron-icon icon="social:person-outline"></iron-icon> -->
+                        &nbsp
+                        <!-- <template is="dom-if" if="[[!isViewAudio]]"> -->
+                            <!-- <iron-icon icon="image:remove-red-eye"></iron-icon> -->
+                            <!-- {{acView}} -->
+                            {{courseId}}
+                        <!-- </template> -->
+                    </div>
+                    <div description>
+                        {{observations}}
+                    </div>
+                </template>
+                <template is="dom-if" if="[[!isCourse]]">
+                    <div top>
+                        <span cardTitle> {{givenName}} {{familyName}} </span>
+                    </div>
+                    <div middle style='margin-left:10px'>
+                        <!-- <iron-icon icon="social:person-outline"></iron-icon> -->
+                        {{gender}}
+                        &nbsp
+                        <!-- <template is="dom-if" if="[[!isViewAudio]]"> -->
+                            <!-- <iron-icon icon="image:remove-red-eye"></iron-icon> -->
+                            <!-- {{acView}} -->
+                            {{personalId}}
+                        <!-- </template> -->
+                    </div>
+                    <div description>
+                        {{observations}}
+                    </div>
+                </template>
             </div>
             <div bottom>
                 <!-- <div info> -->
@@ -265,18 +285,18 @@
                 isDemo:{type:Boolean,value:false},
                 hasDate:{type:Boolean,value:true},
                 isViewAudio:{type:Boolean,value:false},
+                isCourse:{type:Boolean,value:false},
                 hasMetronome:{type:Boolean},
                 url:{type:String},
                 acViewType:{type:String},
                 acView:{type:String},
-                cardTitle:{type:String},
-                user:{type:String},
-                voices:{type:String},
-                tags:{type:Array},
-                license:{type:String},
-                date:{type:Object},
-                duration:{type:String},
-                description:{type:String},
+                givenName:{type:String},
+                courseName:{type:String},
+                courseId:{type:String},
+                familyName:{type:String},
+                personalId:{type:String},
+                gender:{type:String},
+                observations:{type:String},
                 cardId:{observer:'hideCollapse'},
                 open:{type:Boolean,value:false},
                 icon1Id: {type: String,value: 'icons:create'},
@@ -288,98 +308,9 @@
             constructor() {
                 super();
             }
-            _openLicenseLink(e) {
-                // let license = this.shadowRoot.querySelector('#'+e.currentTarget.id).innerHTML ; 
-                let url = 'https://creativecommons.org/licenses/' ; 
-                if(i18next.language.startsWith('es'))
-                    url += '?lang=es' ; 
-                window.open(url) ; 
-            }
-            _polyphony(voices) {
-                if(voices === 'poly')
-                    return this.t2('polyphonic') ; 
-                return this.t2('monophonic') ; 
-            }
-            _tagsShort(arg){
-                if(arg === undefined)
-                    return []; 
-                if(arg.length === 0)
-                    return [] ; 
-                let tags = arg.split(',') ; 
-                tags.sort(function(a, b){return b.length - a.length;});
-                let charLen = 23 ; 
-                if(this.isViewAudio)
-                    charLen = 30 ;
-                if(window.innerWidth < 500)
-                    charLen = 18 ; 
-                let res = []  ; 
-                for(let i = 0 ; i < tags.length  && charLen > 0 ; i ++ ){
-                    if(tags[i].length <= charLen) {
-                        res.push(tags[i])
-                        charLen -= tags[i].length ;
-                        // consider tag margin
-                        charLen -= 3 ; 
-                    }
-                }
-                return res ;
-            }
-            _tagsLong(arg) {
-                if(arg.length === 0)
-                    return [] ; 
-                let ref = this._tagsShort(arg) ; 
-                let tags = arg.split(',') ; 
-                let res = [] ; 
-                for(let i = 0 ; i < tags.length ; i ++ ){
-                    let flag = true ;
-                    for(let j = 0 ; j < ref.length ; j ++ ){
-                        if(tags[i] === ref[j])
-                            flag =false ;
-                    }
-                    if(flag)
-                        res.push(tags[i]) ; 
-                }
-                return res ;
-            }
-            _formatDate(date){
-                if(date === undefined)
-                    return '' ; 
-                try {
-                    let d = new Date(date) ; 
-                    return this.months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear() ; 
-                } catch (error) {
-                    return '' ; 
-                }
-            }
-            _formatDuration(time) {
-                let minutes = Math.floor(time/60) ; 
-                let seconds = time%60 ; 
-                if(seconds < 10)
-                    seconds = '0' + seconds ;
-                return minutes+':'+seconds ;
-            }
             _setIcon (id, icon) {
                 this.shadowRoot.querySelector('#' + id).icon = icon;
                 this.icon1Id = icon;
-            }
-            hideCollapse(){
-                if(this.open){
-                    this.$.collapse.hide();
-                    this.open=false;
-                    this.shadowRoot.querySelector('[main-icon]').classList.remove('hide') ;
-                    this.shadowRoot.querySelector('[more]').icon = 'expand-more';
-                    this.icon1Id = 'expand-more';
-                }
-            }
-            async showDetails(){
-                if(this.open)
-                    return ;
-                this.open=true ;
-                this.$.collapse.show();
-                await sleep(50);
-                if(this.isViewAudio && this.icon1 === undefined) 
-                    this.shadowRoot.querySelector('[main-icon]').classList.add('hide') ;
-                else  
-                    this._setIcon('expand-more', this.icon1);
             }
             _action (e) {
                 if (e.currentTarget.id === 'expand-more') {
@@ -390,22 +321,24 @@
                     this.dispatchEvent(new CustomEvent('delete-card', {detail:{
                         index:index,
                         id: this.cardId,
-                        name: this.cardTitle
+                        name: this.givenName
                     }, bubbles: true, composed: true }));
                 }
                 if (e.currentTarget.id === 'editor:mode-edit' || e.currentTarget.id === 'icons:create' || e.currentTarget.id === 'create') {
                     this.dispatchEvent(new CustomEvent('edit-card', {detail:{
                         id: this.cardId,
-                        title: this.cardTitle,
-                        tags:this.tags,
-                        license:this.license,
-                        description:this.description,
-                        url:this.url
+                        givenName: this.givenName,
+                        familyName:this.familyName,
+                        gender:this.gender,
+                        observations:this.observations,
+                        personalId:this.personalId,
+                        courseName:this.courseName,
+                        courseId:this.courseId
                     }, bubbles: true, composed: true }));
                 }
                 if (e.currentTarget.id === 'av:playlist-add' || e.currentTarget.id === 'collection-add') {
                     this.dispatchEvent(new CustomEvent('addToCollection', {detail:{
-                        name: this.cardTitle,
+                        name: this.givenName,
                         id: this.cardId
                     }, bubbles: true, composed: true }));
                 }

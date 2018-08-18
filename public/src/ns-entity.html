@@ -61,7 +61,7 @@
                 --card-color: var(--theme-color2);
             }
         </style>
-        <ac-list title=[[title]] user-recording-list no-click with-header query="[[query]]" icon1="create" icon2='delete'>
+        <ac-list course-list='[[courseList]]' title=[[title]] course-list no-click with-header query="[[query]]" icon1="create" icon2='delete'>
             <div header>
                 <div header-wrapper>
                     <div blank></div>
@@ -85,7 +85,8 @@
             static get is() { return 'ns-entity'; }
             static get properties() {return {
                 query:{type:String,value:''},
-                title:{type:String,value:'test'}
+                title:{type:String,value:'test'},
+                courseList:{type:Boolean,value:false}
             }}
             constructor() {
                 super();

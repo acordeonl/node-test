@@ -12,6 +12,7 @@
     <link rel="import" href="./base-layout/base-layout.html">
     <link rel="import" href="./ac-card.html">
     <link rel="import" href="../../bower_components/paper-spinner/paper-spinner-lite.html" async>
+    <link rel="import" href="../ac-components/edit-card-form.html">
 </imports>
 <icon-imports>
     <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
@@ -109,11 +110,14 @@
             <prompt-dialog dialog-title="Modificar dato" id="editDialog" confirm-button="Modificar" cancel-button="cancelar">
                 <div content >
                     <edit-card-form 
-                        has-values
-                        title={{editTitle}}
-                        tags={{editTags}}
-                        description={{editDescription}}
-                        license={{editLicense}} > 
+                        is-course=[[courseList]]
+                        given-name={{editGivenName}}
+                        course-name={{editCourseName}}
+                        course-id={{editCourseId}}
+                        observations={{editObservations}}
+                        family-name={{editFamilyName}}
+                        personal-id={{editPersonalId}}
+                        gender={{editGender}} > 
                     </edit-card-form>    
                 </div>
             </prompt-dialog>
@@ -134,22 +138,16 @@
                     </template>
                     <template id="domRepeat" list is="dom-repeat" items="[[list]]" as="card">
                         <ac-card icon1=[[icon1]] icon2=[[icon2]] icon3=[[icon3]]
+                            is-course=[[courseList]]
                             no-click='[[noClick]]'
-                            is-view-audio='[[isViewAudios]]'
-                            is-demo="[[card.isDemo]]"
-                            ac-view-type="[[card.acViewType]]"
-                            license="[[card.license]]"
-                            tags="[[card.tags]]"
-                            user="[[card.user]]"
-                            url="[[card.url]]"
-                            card-title="[[card.title]]"   
-                            voices="[[card.voices]]"
-                            ac-view="[[card.recordedWith]]"
-                            date=[[card.date]]
-                            duration=[[card.duration]]
+                            given-name="[[card.givenName]]"
+                            family-name="[[card.familyName]]"
+                            observations="[[card.observations]]"
+                            course-name="[[card.name]]"
+                            course-id="[[card.courseId]]"
+                            personal-id="[[card.personalId]]"
+                            gender="[[card.gender]]"
                             card-id=[[card._id]]
-                            has-metronome=[[card.hasMetronome]]
-                            description=[[card.description]]
                             id="card_[[index]]">
                         </ac-card>
                     </template>
@@ -175,8 +173,7 @@
             static get properties() {
                 return {
                     loadingToGUI:{type:Boolean,value:false},
-                    userViewAudioList:{type:Boolean,value:false},
-                    userRecordingList:{type:Boolean,value:false},
+                    courseList:{type:Boolean,value:false},
                     noClick:{type:Boolean,value:false},
                     isViewAudios:{type:Boolean,value:false},
                     list: {type: Array},
@@ -210,11 +207,15 @@
             }
             _editCard(e) {
                 var txt;
+                console.log(e);
                 this.editCardId = e.detail.id ; 
-                this.editTitle = e.detail.title;
-                this.editLicense = e.detail.license ;
-                this.editTags = e.detail.tags;
-                this.editDescription = e.detail.description;
+                this.editGivenName = e.detail.givenName;
+                this.editCourseName = e.detail.courseName;
+                this.editObservations = e.detail.observations;
+                this.editCourseId = e.detail.courseId;
+                this.editFamilyName = e.detail.familyName ;
+                this.editPersonalId = e.detail.personalId;
+                this.editGender = e.detail.gender;
                 this.editUrl = e.detail.url ; 
                 Polymer.importHref('/src/ac-components/edit-card-form.html', () => {}, e => {
                     this.dispatchEvent(new CustomEvent('fetch-error', {detail:{
@@ -256,7 +257,7 @@
 
                 try {
                     if(e.path[0].id === 'deleteDialog')  { 
-                        if(e.detail.action === 'confirm' && this.userViewAudioList){
+                        if(e.detail.action === 'confirm' && !this.courseList){
                             await acFetch('/viewAudios/update/remove' , {
                                 viewAudioId:this.deleteCardId
                             }) ; 
@@ -269,7 +270,7 @@
                                 }
                             this.set('list', tmp);
                         }
-                        else if(e.detail.action === 'confirm' && this.userRecordingList){
+                        else if(e.detail.action === 'confirm' && this.courseList){
                             await acFetch('/recordings/update/remove' , {
                                 recordingId:this.deleteCardId
                             }) ; 
@@ -282,108 +283,94 @@
                                 }
                             this.set('list', tmp);
                         }
-                        else if (e.detail.action === 'confirm' && this.type !== 'recent' && !this.isViewAudios) {
-                            await acFetch('/collection/update/remove', {
-                                collectionId: this.query,
-                                recordingId: this.deleteCardId
-                            });
-                            localStorage.removeItem('/collection' + this.query);
-                            ls_set('update/collection' + this.query, 'updated');
-                            this.page = 0;
-                            this.loading = true;
-                            this.set('list', []);
-                            this._getData();
-                        }
-                        else if (e.detail.action === 'confirm' && this.type === 'recent') {
-                            let tmp = ls_get('/recent');
-                            let recent = [];
-                            recent = recent.concat(tmp.slice(0, this.deleteCardIdIndex));
-                            recent = recent.concat(tmp.slice(this.deleteCardIdIndex + 1, tmp.length));
-                            ls_set('/recent', recent);
-
-                            tmp = this.list;
-                            this.set('list', []);
-                            this.loading = true;
-                            await sleep(200);
-                            this.set('list', this.list.concat(tmp.slice(0, this.deleteCardIdIndex)));
-                            this.set('list', this.list.concat(tmp.slice(this.deleteCardIdIndex + 1,
-                                tmp.length)));
-                            this.loading = false;
-                        }
                     }
                     if(e.path[0].id === 'editDialog') { 
-                        if(e.detail.action === 'confirm' && this.userViewAudioList) { 
-
-                            if(this.editTitle.length === 0){
+                        if(e.detail.action === 'confirm' && !this.courseList) { 
+                            if(this.editGivenName.length === 0){
                                 this.dispatchEvent(new CustomEvent('toast', {detail:{
-                                    msg:this.t2('uploadTitleEmpty')
+                                    msg:'Por favor ingresa los nombres y vueve a intentar'
+                                }, bubbles: true, composed: true }));
+                                this.processingPromptAction = false ;
+                                return ; 
+                            }
+                            if(this.editFamilyName.length === 0){
+                                this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                    msg:'Por favor ingresa los apellidos y vueve a intentar'
+                                }, bubbles: true, composed: true }));
+                                this.processingPromptAction = false ;
+                                return ; 
+                            }
+                            if(this.editGender.length === 0){
+                                this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                    msg:'Por favor agrega el género y vueve a intentar'
+                                }, bubbles: true, composed: true }));
+                                this.processingPromptAction = false ;
+                                return ; 
+                            }
+                            if(this.editPersonalId.length === 0){
+                                this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                    msg:'Por favor agrega la identificación y vueve a intentar'
                                 }, bubbles: true, composed: true }));
                                 this.processingPromptAction = false ;
                                 return ; 
                             }
 
-                            if(this.editUrl.length === 0){
-                                this.dispatchEvent(new CustomEvent('toast', {detail:{
-                                    msg:this.t2('uploadUrlEmpty')
-                                }, bubbles: true, composed: true }));
-                                this.processingPromptAction = false ;
-                                return ; 
-                            }
-
-                            await acFetch('/viewAudio/update',{
-                                viewAudioId:this.editCardId,
-                                viewAudioInfo:{
-                                    title:this.editTitle, 
-                                    description:this.editDescription,
-                                    tags:this.editTags,
-                                    license:this.editLicense,
-                                    url:this.editUrl
-                                }
-                            }) ;            
+                            // await acFetch('/viewAudio/update',{
+                            //     viewAudioId:this.editCardId,
+                            //     viewAudioInfo:{
+                            //         title:this.editGivenName, 
+                            //         description:this.editGender,
+                            //         tags:this.editPersonalId,
+                            //         license:this.editFamilyName,
+                            //         url:this.editUrl
+                            //     }
+                            // }) ;            
 
                             let tmp = this.list ;
                             this.set('list', []);
                             this.loading = true ;
                             for(let i = 0 ; i < tmp.length ; i ++ ){
                                 if(tmp[i]._id === this.editCardId) { 
-                                    tmp[i].title = this.editTitle ;
-                                    tmp[i].description = this.editDescription ; 
-                                    tmp[i].tags = this.editTags ; 
-                                    tmp[i].license = this.editLicense ; 
-                                    tmp[i].url = this.editUrl ; 
+                                    tmp[i].givenName = this.editGivenName ;
+                                    tmp[i].gender = this.editGender ; 
+                                    tmp[i].personalId = this.editPersonalId ; 
+                                    tmp[i].familyName = this.editFamilyName ; 
+                                    tmp[i].observations = this.editObservations ; 
                                 }
                             }
                             this.set('list', tmp);
                             this.loading = false ;
                         } 
-                        if(e.detail.action === 'confirm' && this.userRecordingList) { 
-                            if(this.editTitle.length === 0){
+                        if(e.detail.action === 'confirm' && this.courseList) { 
+                            console.log(this.editCourseName);
+                            console.log(this.editCourseId);
+                            console.log(this.editObservations);
+                            if(this.editCourseName.length === 0){
                                 this.dispatchEvent(new CustomEvent('toast', {detail:{
-                                    msg:this.t2('uploadTitleEmpty')
+                                    msg:'Por favor agrega el nombre y vuelve a intentar'
                                 }, bubbles: true, composed: true }));
                                 this.processingPromptAction = false ;
                                 return ; 
                             }
 
-                            await acFetch('/recording/update',{
-                                recordingId:this.editCardId,
-                                recordingInfo:{
-                                    title:this.editTitle, 
-                                    description:this.editDescription,
-                                    tags:this.editTags,
-                                    license:this.editLicense
-                                }
-                            }) ;            
+                            // await acFetch('/recording/update',{
+                            //     recordingId:this.editCardId,
+                            //     recordingInfo:{
+                            //         title:this.editGivenName, 
+                            //         description:this.editGender,
+                            //         tags:this.editPersonalId,
+                            //         license:this.editFamilyName
+                            //     }
+                            // }) ;            
 
                             let tmp = this.list ;
                             this.set('list', []);
                             this.loading = true ;
                             for(let i = 0 ; i < tmp.length ; i ++ ){
                                 if(tmp[i]._id === this.editCardId) { 
-                                    tmp[i].title = this.editTitle ;
-                                    tmp[i].description = this.editDescription ; 
-                                    tmp[i].tags = this.editTags ; 
-                                    tmp[i].license = this.editLicense ; 
+                                    tmp[i].name = this.editCourseName ;
+                                    tmp[i].courseId = this.editCourseId ; 
+                                    tmp[i].observations = this.editObservations ; 
                                 }
                             }
                             this.set('list', tmp);

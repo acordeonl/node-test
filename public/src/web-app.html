@@ -158,10 +158,10 @@
             <paper-icon-button icon='close' on-click="_closeToastPersist"></paper-icon-button>
         </paper-toast>
         <div dialogs>
-            <prompt-dialog dialog-title="Regitrar Dato" id="createDialog" confirm-button="Registrar" cancel-button="cancelar">
+            <prompt-dialog dialog-title="Registrar Dato" id="createDialog" confirm-button="Registrar" cancel-button="cancelar">
                 <div content >
                     <edit-card-form 
-                        has-values
+                        is-course='[[courseList]]'
                         title='test'
                         tags='test1'
                         description='test2'
@@ -172,13 +172,13 @@
         </div>
         <div wrapper>
             <view-layout position='bottom' height='85vh' width='450px'>
-                <ns-entity> </ns-entity>
+                <ns-entity course-list=[[courseList]]> </ns-entity>
             </view-layout>
             <div header>
                 <div select-entity>
-                    <paper-button id='studentBtn' class='selected'  on-click='_selectEntity' > Estudiante </paper-button>
+                    <paper-button id='studentBtn'  on-click='_selectEntity' > Estudiante </paper-button>
                     <paper-button id='teacherBtn' on-click='_selectEntity'  > Docente </paper-button>
-                    <paper-button id='courseBtn' on-click='_selectEntity'> Curso </paper-button>
+                    <paper-button id='courseBtn' class='selected' on-click='_selectEntity'> Curso </paper-button>
                 </div>
             </div>
             <div footer>
@@ -199,6 +199,7 @@
         class WebApp extends Polymer.Element {
             static get is() { return 'web-app'; }
             static get properties() {return {
+                courseList:{type:String,value:true},
                 selectedBtn:{type:String,value:'studentBtn'},
             }}
             constructor() {
