@@ -144,6 +144,19 @@
                 color: gray ; 
             }
         </style>
+        <div dialogs>
+            <prompt-dialog dialog-title="Regitrar Elemento" id="createDialog" confirm-button="Registrar" cancel-button="cancelar">
+                <div content >
+                    <edit-card-form 
+                        has-values
+                        title='test'
+                        tags='test1'
+                        description='test2'
+                        license='test4' > 
+                    </edit-card-form>    
+                </div>
+            </prompt-dialog>
+        </div>
         <div wrapper>
             <view-layout position='bottom' height='580px' width='450px'>
                 <ns-entity> </ns-entity>
@@ -157,7 +170,7 @@
             </div>
             <div footer>
                 <div >
-                    <paper-icon-button addEntity icon='icons:add'></paper-icon-button>
+                    <paper-icon-button on-click='_openCreateDialog' addEntity icon='icons:add'></paper-icon-button>
                 </div>
             </div>
             <div logout>
@@ -177,6 +190,9 @@
             }}
             constructor() {
                 super();
+            }
+            _openCreateDialog() {
+                this.$.createDialog.open();
             }
             _selectEntity(e){
                 this.shadowRoot.querySelector('#'+this.selectedBtn).classList.remove('selected') ; 

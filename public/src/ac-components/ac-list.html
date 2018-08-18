@@ -106,7 +106,7 @@
         </style>
         <dialogs>
             <prompt-dialog with-message id="deleteDialog" confirm-button="eliminar" cancel-button="cancelar"></prompt-dialog>
-            <prompt-dialog dialog-title="Editar elemento" id="editDialog" confirm-button="editar" cancel-button="cancelar">
+            <prompt-dialog dialog-title="Modificar dato" id="editDialog" confirm-button="Modificar" cancel-button="cancelar">
                 <div content >
                     <edit-card-form 
                         has-values
@@ -205,7 +205,7 @@
             _deleteCard(e) {
                 this.deleteCardId = e.detail.id;
                 this.deleteCardIdIndex = e.detail.index;
-                this.$.deleteDialog.message = '¿Seguro que desea eliminar?' ;
+                this.$.deleteDialog.message = '¿Seguro que desea eliminar dato?' ;
                 this.$.deleteDialog.open();
             }
             _editCard(e) {

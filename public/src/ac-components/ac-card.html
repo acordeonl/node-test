@@ -55,7 +55,7 @@
                     width: 100%;
                     @apply --layout-center;
                     @apply --layout-horizontal;
-                    @apply --layout-justified;
+                    @apply --layout-end-justified;
                 }
                 [acViewType] {
                     background-color: var(--background-color0,#efebe9) ; 
@@ -250,10 +250,10 @@
             </div>
             <div bottom>
                 <!-- <div info> -->
-                    <div style="width:41px; height:41px; margin-bottom: 10px ; ">
-                        <paper-icon-button main-icon id=[[icon1Id]] on-click='_action' more icon="icons:create"></paper-icon-button>
-                        <paper-icon-button  index="{{id}}" on-click='_action' id='[[icon2]]' icon='[[icon2]]' extra-icon></paper-icon-button>
-                    </div>
+                    <!-- <div buttons style="width:41px; height:41px; margin-bottom: 10px ; "> -->
+                        <paper-icon-button style='margin-right:10px;' id=[[icon1Id]] on-click='_action' icon="icons:create"></paper-icon-button>
+                        <paper-icon-button  index="{{id}}" on-click='_action' id='[[icon2]]' icon='[[icon2]]'></paper-icon-button>
+                    <!-- </div> -->
                 <!-- </div> -->
             </div>
         </div>
