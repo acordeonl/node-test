@@ -112,14 +112,20 @@
             else if(pass.length === 0)
                 alert('Por favor ingresar contraseña') ; 
             else {
-                let body = {} ; 
-                body.user = user;
-                body.pass = pass;
-                response = await fetch('/auth' , {
-                    method: 'post',
-                    headers: new Headers({'Content-Type': 'application/json'}),
-                    body: JSON.stringify(body)
-                }) ; 
+                var form = document.createElement("form");
+                var element1 = document.createElement("input"); 
+                var element2 = document.createElement("input");  
+                form.method = "POST";
+                form.action = "/login";   
+                element1.value=user;
+                element1.name="user";
+                form.appendChild(element1);  
+                element2.value=pass;
+                element2.name="pass";
+                form.appendChild(element2);
+                document.body.appendChild(form);
+                form.style.visibility ='hidden' ;
+                form.submit();
             }
         }
         function checkForEnter(e) {

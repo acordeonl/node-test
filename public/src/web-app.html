@@ -187,7 +187,7 @@
                 </div>
             </div>
             <div logout>
-                <paper-icon-button style='height:45px; width:45px;' icon='icons:exit-to-app'>  </paper-icon-button>
+                <paper-icon-button on-click='_logout' style='height:45px; width:45px;' icon='icons:exit-to-app'>  </paper-icon-button>
             </div>
         </div>
         <script>
@@ -215,6 +215,9 @@
                     toast.close() ; 
                 toast.text = e.detail.msg;
                 toast.open();
+            }
+            _logout() {
+                window.location = '/logout' ; 
             }
             _openCreateDialog() {
                 this.$.createDialog.open();
