@@ -176,9 +176,9 @@
             </view-layout>
             <div header>
                 <div select-entity>
-                    <paper-button id='studentBtn'  on-click='_selectEntity' > Estudiante </paper-button>
+                    <paper-button id='studentBtn' class='selected'  on-click='_selectEntity' > Estudiante </paper-button>
                     <paper-button id='teacherBtn' on-click='_selectEntity'  > Docente </paper-button>
-                    <paper-button id='courseBtn' class='selected' on-click='_selectEntity'> Curso </paper-button>
+                    <paper-button id='courseBtn'  on-click='_selectEntity'> Curso </paper-button>
                 </div>
             </div>
             <div footer>
@@ -190,16 +190,13 @@
                 <paper-icon-button on-click='_logout' style='height:45px; width:45px;' icon='icons:exit-to-app'>  </paper-icon-button>
             </div>
         </div>
-        <script>
-            app_elementsPerPage = 10 ; 
-            var sleep = n => new Promise(resolve => setTimeout(resolve, n)); 
-        </script>
     </template>
     <script>
         class WebApp extends Polymer.Element {
             static get is() { return 'web-app'; }
             static get properties() {return {
-                courseList:{type:String,value:true},
+                selectingEntity:{type:Boolean,value:false},
+                courseList:{type:String,value:false},
                 selectedBtn:{type:String,value:'studentBtn'},
             }}
             constructor() {
@@ -223,11 +220,24 @@
             _openCreateDialog() {
                 this.$.createDialog.open();
             }
-            _selectEntity(e){
+            async _selectEntity(e){
+                if(this.selectingEntity)
+                    return ; 
+                this.selectingEntity = true ; 
                 this.shadowRoot.querySelector('#'+this.selectedBtn).classList.remove('selected') ; 
                 this.selectedBtn = e.currentTarget.id ; 
+                if(this.selectedBtn === 'courseBtn'){
+                    this.courseList = true ; 
+                    entityType = 'course' ; 
+                }
+                else   {
+                    this.courseList = false ; 
+                    entityType = 'person'
+                }
                 this.shadowRoot.querySelector('#'+this.selectedBtn).classList.add('selected') ; 
-
+                this.shadowRoot.querySelector('ns-entity')._updateList() ; 
+                await sleep(500);
+                this.selectingEntity = false ;
             }
             _closeToastPersist() {
                 this.$.toastPersist.toggle() ;     

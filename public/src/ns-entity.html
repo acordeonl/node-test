@@ -91,6 +91,9 @@
             constructor() {
                 super();
             }
+            _updateList() {
+                this.shadowRoot.querySelector('ac-list')._updateList() ; 
+            }
             _getData() {
                 if(this.$.searchInput.value.length > 0)
                     this.query = this.$.searchInput.value.replace(/#/g, '') ;  

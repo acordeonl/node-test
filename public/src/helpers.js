@@ -12,37 +12,99 @@ async function acFetch(url, body, url_base) {
     //     headers: new Headers({'Content-Type': 'application/json'}),
     //     body: JSON.stringify(body)
     // }) ; 
-    
-    // response = {
-    //     "data": [{
-    //         "_id": "5b5f7b548ff0510e5ff99429",
-    //         "givenName": "Camilo Andres",
-    //         "familyName": "Barraza Urbina",
-    //         "gender":"M",
-    //         "personalId":"1121300667"
-    //     },{
-    //         "_id": "5b5f7b548ff0fdasf510e5ff99429",
-    //         "givenName": "Gonzalo",
-    //         "familyName": "Higuain",
-    //         "gender":"M",
-    //         "personalId":"113240667"
-    //     }],
-    //     "ref": "f1svwhmfc"
-    // }
-
-    response = {
-        "data": [{
-            "_id": "5b5f7b548ff0fdasf510e5fdasfadsff99429",
-            "courseId": "342j4fdasfas32jkl342",
-            "name": "historia del arte",
-            "observations":"Curso complementario",
-        },{
-            "_id": "5b5f7b548ff0fdasf510e5ff99429",
-            "courseId": "342j432jkl342",
-            "name": "Intro a la ing",
-            "observations":"Curso de iniciación",
-        }],
-        "ref": "f1svwhmfc"
+    console.log(entityType);
+    if(entityType === 'person'){
+        response = {
+            "data": [
+                {
+                "_id": "5b5f7b548ff0510e5ff99429",
+                "givenName": "Camilo Andres",
+                "familyName": "Barraza Urbina",
+                "gender":"M",
+                "personalId":"1121300667"
+            },
+            {
+                "_id": "5b5f7b548ff0fdasf510e5ff99429",
+                "givenName": "Gonzalo",
+                "familyName": "Higuain",
+                "gender":"M",
+                "personalId":"113240667"
+            },
+            {
+                "_id": "5b5f7b548ff0fdasf510e5ff99429",
+                "givenName": "Gonzalo",
+                "familyName": "Higuain",
+                "gender":"M",
+                "personalId":"113240667"
+            },
+            {
+                "_id": "5b5f7b548ff0fdasf510e5ff99429",
+                "givenName": "Gonzalo",
+                "familyName": "Higuain",
+                "gender":"M",
+                "personalId":"113240667"
+            },
+            {
+                "_id": "5b5f7b548ff0fdasf510e5ff99429",
+                "givenName": "Gonzalo",
+                "familyName": "Higuain",
+                "gender":"M",
+                "personalId":"113240667"
+            },
+            {
+                "_id": "5b5f7b548ff0fdasf510e5ff99429",
+                "givenName": "Gonzalo",
+                "familyName": "Higuain",
+                "gender":"M",
+                "personalId":"113240667"
+            },
+            {
+                "_id": "5b5f7b548ff0fdasf510e5ff99429",
+                "givenName": "Gonzalo",
+                "familyName": "Higuain",
+                "gender":"M",
+                "personalId":"113240667"
+            },
+            {
+                "_id": "5b5f7b548ff0fdasf510e5ff99429",
+                "givenName": "Gonzalo",
+                "familyName": "Higuain",
+                "gender":"M",
+                "personalId":"113240667"
+            },
+            {
+                "_id": "5b5f7b548ff0fdasf510e5ff99429",
+                "givenName": "Gonzalo",
+                "familyName": "Higuain",
+                "gender":"M",
+                "personalId":"113240667"
+            },
+            {
+                "_id": "5b5f7b548ff0fdasf510e5ff99429",
+                "givenName": "Gonzalo",
+                "familyName": "Higuain",
+                "gender":"M",
+                "personalId":"113240667"
+            }
+        ],
+            "ref": "f1svwhmfc"
+        }
+    }
+    else{
+        response = {
+            "data": [{
+                "_id": "5b5f7b548ff0fdasf510e5fdasfadsff99429",
+                "courseId": "342j4fdasfas32jkl342",
+                "name": "historia del arte",
+                "observations":"Curso complementario",
+            },{
+                "_id": "5b5f7b548ff0fdasf510e5ff99429",
+                "courseId": "342j432jkl342",
+                "name": "Intro a la ing",
+                "observations":"Curso de iniciación",
+            }],
+            "ref": "f1svwhmfc"
+        }
     }
     await sleep(200);
 

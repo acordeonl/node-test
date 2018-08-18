@@ -491,6 +491,10 @@
                 }
 
             }
+            async _updateList() {
+                this.query ='' ; 
+                this._getData(this.query) ; 
+            }
             disconnectedCallback() {
                 super.disconnectedCallback();
                 this.contentAttached = new Promise(resolve => this.contentAttachedR = resolve);
