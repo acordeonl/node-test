@@ -1,0 +1,557 @@
+<imports>
+    <link rel="import" href='../../bower_components/polymer/polymer-element.html'>
+    <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+    <link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+    <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+    <link rel="import" href="../ac-components/collection-dialog/collection-dialog.html">
+    <link rel="import" href="../../bower_components/prompt-dialog/prompt-dialog.html">
+    <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+    <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+    <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+    <link rel="import" href="./base-layout/base-layout.html">
+    <link rel="import" href="./ac-card.html">
+    <link rel="import" href="../../bower_components/paper-spinner/paper-spinner-lite.html" async>
+</imports>
+<icon-imports>
+    <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+    <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+    <link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+    <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+    <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+</icon-imports>
+
+
+<dom-module id="ac-list">
+    <template>
+        <style>
+        </style>
+        <style dialog>
+            [dialog-content] {
+                width: 90%;
+            }
+
+            paper-input {
+                margin-bottom: 10px;
+                --paper-input-container-label: {
+                    font-size: 16px;
+                    font-weight: 300;
+                    color: var(--content-color, #212121);
+                }
+                ;
+                --paper-input-container-input: {
+                    font-size: 18px;
+                    font-weight: 300;
+                    color: var(--content-color, #212121);
+                }
+                ;
+            }
+
+            paper-textarea {
+                font-size: 30px;
+                --iron-autogrow-textarea: {
+                    font-size: 18px;
+                    font-weight: 300;
+                }
+                ;
+            }
+        </style>
+        <style>
+            [message-holder] {
+                width: 100%;
+                font-size: 19px;
+                @apply --layout-horizontal;
+                @apply --layout-center-justified;
+                @apply --layout-center;
+                margin-top: 100px;
+                color: var(--content-color, #212121);
+            }
+
+            [loading-more] {
+                width: 100%;
+                font-size: 19px;
+                @apply --layout-horizontal;
+                @apply --layout-center-justified;
+                @apply --layout-center;
+                margin-top: 50px;
+                color: var(--content-color, #212121);
+            }
+
+            [content] {
+                margin-top: 0;
+            }
+
+            [loading] {
+                width: 100%;
+                font-size: 22px;
+                @apply --layout-horizontal;
+                @apply --layout-center-justified;
+                @apply --layout-center;
+                margin-top: 100px;
+                position: relative;
+                color: gray;
+            }
+
+            [header] {
+                width: 100%;
+            }
+
+            paper-spinner-lite {
+                --paper-spinner-color: var(--theme-color1);
+            }
+
+            base-layout {
+                --layout-color: var(--card-color, var(--theme-color1));
+            }
+        </style>
+        <dialogs>
+            <prompt-dialog with-message id="deleteDialog" confirm-button="eliminar" cancel-button="cancelar"></prompt-dialog>
+            <prompt-dialog dialog-title="editar" id="editDialog" confirm-button="editar" cancel-button="cancelar">
+                <div content >
+                    <edit-card-form 
+                        has-values
+                        title={{editTitle}}
+                        tags={{editTags}}
+                        description={{editDescription}}
+                        license={{editLicense}} > 
+                    </edit-card-form>    
+                </div>
+            </prompt-dialog>
+            <collection-dialog parent={{query}} id="dialog"></collection-dialog>
+        </dialogs>
+        <base-layout id="baseLayout" exit-icon="{{exitIcon}}" with-header$="{{withHeader}}" header="[[title]]">
+            <div header slot='header'>
+                <slot></slot>
+            </div>
+            <div content slot='content'>
+                <template is="dom-if" if="[[!loading]]">
+                    <template is="dom-if" if="[[!list.length]]">
+                        <template is="dom-if" if="[[!loadingToGUI]]">
+                            <div message-holder>
+                                La lista está vacia
+                            </div>
+                        </template>
+                    </template>
+                    <template id="domRepeat" list is="dom-repeat" items="[[list]]" as="card">
+                        <ac-card icon1=[[icon1]] icon2=[[icon2]] icon3=[[icon3]]
+                            no-click='[[noClick]]'
+                            is-view-audio='[[isViewAudios]]'
+                            is-demo="[[card.isDemo]]"
+                            ac-view-type="[[card.acViewType]]"
+                            license="[[card.license]]"
+                            tags="[[card.tags]]"
+                            user="[[card.user]]"
+                            url="[[card.url]]"
+                            card-title="[[card.title]]"   
+                            voices="[[card.voices]]"
+                            ac-view="[[card.recordedWith]]"
+                            date=[[card.date]]
+                            duration=[[card.duration]]
+                            card-id=[[card._id]]
+                            has-metronome=[[card.hasMetronome]]
+                            description=[[card.description]]
+                            id="card_[[index]]">
+                        </ac-card>
+                    </template>
+                    <template is="dom-if" if="[[loadingMore]]">
+                        <div loading-more>
+                            <paper-spinner-lite active> ...</paper-spinner-lite>
+                        </div>
+                    </template>
+                </template>
+                <template is="dom-if" if="[[loading]]">
+                    <div loading>
+                        Cargando ...
+                    </div>
+                </template>
+            </div>
+        </base-layout>
+    </template>
+    <script>
+        class ACList extends Polymer.Element {
+            static get is() {
+                return 'ac-list';
+            }
+            static get properties() {
+                return {
+                    loadingToGUI:{type:Boolean,value:false},
+                    userViewAudioList:{type:Boolean,value:false},
+                    userRecordingList:{type:Boolean,value:false},
+                    noClick:{type:Boolean,value:false},
+                    isViewAudios:{type:Boolean,value:false},
+                    list: {type: Array},
+                    deleteCardId: {type: String},
+                    editCardId: {type: String},
+                    page: {type: Number,value: 0},
+                    loadingMore: {type: Boolean,value: false},
+                    title: {type: String},
+                    type: {type: String},
+                    icon1: {type: String},
+                    icon2: {type: String},
+                    icon3: {type: String},
+                    exitIcon: {type: String},
+                    query: {type: String,observer: '_getData'},
+                    withHeader: {type: Boolean,value: false},
+                    selectedCardId: {type: Number},
+                    cardTitle: {type: String},
+                    rendered: {type: Boolean,value: false}
+                }
+            }
+            constructor() {
+                super();
+                this.list = [];
+                this.contentAttached = new Promise(resolve => this.contentAttachedR = resolve);
+            }
+            _deleteCard(e) {
+                this.deleteCardId = e.detail.id;
+                this.deleteCardIdIndex = e.detail.index;
+                this.$.deleteDialog.message = '¿Seguro que desea eliminar?' ;
+                this.$.deleteDialog.open();
+            }
+            _editCard(e) {
+                var txt;
+                this.editCardId = e.detail.id ; 
+                this.editTitle = e.detail.title;
+                this.editLicense = e.detail.license ;
+                this.editTags = e.detail.tags;
+                this.editDescription = e.detail.description;
+                this.editUrl = e.detail.url ; 
+                Polymer.importHref('/src/ac-components/edit-card-form.html', () => {}, e => {
+                    this.dispatchEvent(new CustomEvent('fetch-error', {detail:{
+                        error:e
+                    }, bubbles: true, composed: true }));
+                }, true );
+                this.$.editDialog.open();
+            }
+            _didRespond(e) {
+                var cards = e.detail.response;
+                for (var i = 0; i < cards.length; i++) {
+                    this.push('list', cards[i]);
+                }
+            }
+            _iconAction(e) {
+                if (e.detail.which === 'exitIcon') {
+                    this.dispatchEvent(new CustomEvent('close', {
+                        bubbles: true,
+                        composed: true
+                    }));
+                }
+            }
+            _menuAction(e) {
+                if (e.detail.item.id === 'cuenta')
+                    this.set('route.path', '/cuenta/estado');
+                if (e.detail.item.id === 'signout') {
+                    this.set('route.path', '/cuenta/exit');
+                }
+            }
+            _showCollection(e) {
+                this.$.dialog.open();
+                this.selectedCardId = e.detail.id;
+                this.cardTitle = e.detail.name;
+            }
+            async _onPromptDialogAction(e) {
+                if (this.processingPromptAction)
+                    return;
+                this.processingPromptAction = true;
+
+                try {
+                    if(e.path[0].id === 'deleteDialog')  { 
+                        if(e.detail.action === 'confirm' && this.userViewAudioList){
+                            await acFetch('/viewAudios/update/remove' , {
+                                viewAudioId:this.deleteCardId
+                            }) ; 
+                            let tmp = this.list ; 
+                            this.set('list', []);
+                            for(let i = 0 ; i < tmp.length ; i ++ )
+                                if(tmp[i]._id === this.deleteCardId){
+                                    tmp = tmp.slice(0,i).concat(tmp.slice(i+1,tmp.length)) ; 
+                                    break ;
+                                }
+                            this.set('list', tmp);
+                        }
+                        else if(e.detail.action === 'confirm' && this.userRecordingList){
+                            await acFetch('/recordings/update/remove' , {
+                                recordingId:this.deleteCardId
+                            }) ; 
+                            let tmp = this.list ; 
+                            this.set('list', []);
+                            for(let i = 0 ; i < tmp.length ; i ++ )
+                                if(tmp[i]._id === this.deleteCardId){
+                                    tmp = tmp.slice(0,i).concat(tmp.slice(i+1,tmp.length)) ; 
+                                    break ;
+                                }
+                            this.set('list', tmp);
+                        }
+                        else if (e.detail.action === 'confirm' && this.type !== 'recent' && !this.isViewAudios) {
+                            await acFetch('/collection/update/remove', {
+                                collectionId: this.query,
+                                recordingId: this.deleteCardId
+                            });
+                            localStorage.removeItem('/collection' + this.query);
+                            ls_set('update/collection' + this.query, 'updated');
+                            this.page = 0;
+                            this.loading = true;
+                            this.set('list', []);
+                            this._getData();
+                        }
+                        else if (e.detail.action === 'confirm' && this.type === 'recent') {
+                            let tmp = ls_get('/recent');
+                            let recent = [];
+                            recent = recent.concat(tmp.slice(0, this.deleteCardIdIndex));
+                            recent = recent.concat(tmp.slice(this.deleteCardIdIndex + 1, tmp.length));
+                            ls_set('/recent', recent);
+
+                            tmp = this.list;
+                            this.set('list', []);
+                            this.loading = true;
+                            await sleep(200);
+                            this.set('list', this.list.concat(tmp.slice(0, this.deleteCardIdIndex)));
+                            this.set('list', this.list.concat(tmp.slice(this.deleteCardIdIndex + 1,
+                                tmp.length)));
+                            this.loading = false;
+                        }
+                    }
+                    if(e.path[0].id === 'editDialog') { 
+                        if(e.detail.action === 'confirm' && this.userViewAudioList) { 
+
+                            if(this.editTitle.length === 0){
+                                this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                    msg:this.t2('uploadTitleEmpty')
+                                }, bubbles: true, composed: true }));
+                                this.processingPromptAction = false ;
+                                return ; 
+                            }
+
+                            if(this.editUrl.length === 0){
+                                this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                    msg:this.t2('uploadUrlEmpty')
+                                }, bubbles: true, composed: true }));
+                                this.processingPromptAction = false ;
+                                return ; 
+                            }
+
+                            await acFetch('/viewAudio/update',{
+                                viewAudioId:this.editCardId,
+                                viewAudioInfo:{
+                                    title:this.editTitle, 
+                                    description:this.editDescription,
+                                    tags:this.editTags,
+                                    license:this.editLicense,
+                                    url:this.editUrl
+                                }
+                            }) ;            
+
+                            let tmp = this.list ;
+                            this.set('list', []);
+                            this.loading = true ;
+                            for(let i = 0 ; i < tmp.length ; i ++ ){
+                                if(tmp[i]._id === this.editCardId) { 
+                                    tmp[i].title = this.editTitle ;
+                                    tmp[i].description = this.editDescription ; 
+                                    tmp[i].tags = this.editTags ; 
+                                    tmp[i].license = this.editLicense ; 
+                                    tmp[i].url = this.editUrl ; 
+                                }
+                            }
+                            this.set('list', tmp);
+                            this.loading = false ;
+                        } 
+                        if(e.detail.action === 'confirm' && this.userRecordingList) { 
+                            if(this.editTitle.length === 0){
+                                this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                    msg:this.t2('uploadTitleEmpty')
+                                }, bubbles: true, composed: true }));
+                                this.processingPromptAction = false ;
+                                return ; 
+                            }
+
+                            await acFetch('/recording/update',{
+                                recordingId:this.editCardId,
+                                recordingInfo:{
+                                    title:this.editTitle, 
+                                    description:this.editDescription,
+                                    tags:this.editTags,
+                                    license:this.editLicense
+                                }
+                            }) ;            
+
+                            let tmp = this.list ;
+                            this.set('list', []);
+                            this.loading = true ;
+                            for(let i = 0 ; i < tmp.length ; i ++ ){
+                                if(tmp[i]._id === this.editCardId) { 
+                                    tmp[i].title = this.editTitle ;
+                                    tmp[i].description = this.editDescription ; 
+                                    tmp[i].tags = this.editTags ; 
+                                    tmp[i].license = this.editLicense ; 
+                                }
+                            }
+                            this.set('list', tmp);
+                            this.loading = false ;
+                        } 
+                    }
+                }    
+                catch(e){
+                    this.processingPromptAction = false ;
+                    this.dispatchEvent(new CustomEvent('fetch-error', {detail:{
+                        error:e
+                    }, bubbles: true, composed: true }));
+                    this.loading = false ;
+                    this.loadingMore = false ;
+                } 
+                    
+
+                await sleep(1000);
+                this.processingPromptAction = false;
+            }
+            async _addToCollection(e) {
+                try {
+                    await acFetch('/collection/update/add', {
+                        collectionId: e.detail.collectionId,
+                        recordingId: this.selectedCardId
+                    });
+
+                    localStorage.removeItem('/collection' + e.detail.collectionId);
+                    ls_set('update/collection' + e.detail.collectionId, 'updated');
+                    this.dispatchEvent(new CustomEvent('toast', {
+                        detail: {
+                            msg: this.t('addElement' , {element:this.cardTitle , list: e.detail.collectionTitle})
+                        },
+                        bubbles: true,
+                        composed: true
+                    }));
+                }    
+                catch(e){
+                   this.dispatchEvent(new CustomEvent('fetch-error', {detail:{
+                       error:e
+                   }, bubbles: true, composed: true }));
+                   this.loading = false ;
+                   this.loadingMore = false ;
+                } 
+
+            }
+            async _getData(e) {
+                await this.contentAttached;
+                try {
+                    if(!this.isViewAudios) {
+                        if (e === this.query && this.query !== undefined) {
+                            this.page = 0;
+                            this.loading = true;
+                            this.set('list', []);
+                        } else {
+                            this.loadingMore = true;
+                        }
+
+                        let receivedData = [];
+                       
+                        if(this.query.length === 0) {
+                            receivedData = await acFetch('/user/recordings' , {
+                                page: this.page
+                            }) ; 
+                        }
+                        else{
+                            receivedData = await acFetch('/query/user/recordings' , {
+                                query: this.query, 
+                                page: this.page
+                            }) ; 
+                        }
+                        // --------------- GUI bug fix ----------------------
+                        this.loading = false ; 
+                        this.loadingToGUI = true ; 
+                        await sleep(50);
+                        // --------------------------------------------------
+                        if(receivedData === undefined)
+                            this.set('list', []) ; 
+                        else 
+                            this.set('list', this.list.concat(receivedData));
+
+                        if (receivedData !== undefined && receivedData.length === app_elementsPerPage)
+                            this.$.baseLayout.onReceivedData();
+
+                        localStorage.removeItem('update/collection' + this.query);
+                        localStorage.removeItem('update/recent');
+                        this.loadingMore = false;
+                        this.loadingToGUI = false ;
+                        this.page++;
+                    }
+                }    
+                catch(e){
+                    console.log(e);
+                   this.dispatchEvent(new CustomEvent('fetch-error', {detail:{
+                       error:e
+                   }, bubbles: true, composed: true }));
+                   this.loading = false ;
+                   this.loadingToGUI = false ;
+                   this.loadingMore = false ;
+                } 
+            }
+            connectedCallback() {
+                super.connectedCallback();
+                this.contentAttachedR();
+                if (this.type === 'userCollection') {
+                    if (ls_get('update/collection' + this.query) === 'updated') {
+                        this.page = 0;
+                        this.loading = true;
+                        this.set('list', []);
+                        this._getData();
+                    }
+                }
+                if (this.type === 'recent') {
+                    if (ls_get('update/recent') === 'updated') {
+                        this.page = 0;
+                        this.loading = true;
+                        this.set('list', []);
+                        this._getData();
+                    }
+                }
+
+            }
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                this.contentAttached = new Promise(resolve => this.contentAttachedR = resolve);
+            }
+            _onPlayRecording(e) {
+                // check from i = 1 to prevent adding current recording
+                for (let i = 0; i < this.list.length; i++) {
+                    if (this.list[i]._id === e.detail.id) {
+                        let tmp = ls_get('/recent');
+                        if (tmp !== null && tmp !== undefined && tmp.length !== 0 && tmp[0]._id === e.detail.id)
+                            return;
+                        ls_set('update/recent', 'updated');
+                        let recent = [];
+                        recent.push(this.list[i]);
+                        recent = recent.concat(tmp)
+                        recent = recent.slice(0, 30);
+                        ls_set('/recent', recent);
+                        return;
+                    }
+                }
+            }
+            _editTitle(type) {
+                if(type === 'viewAudios')
+                    return this.t('editAudio')  ; 
+                return this.t('editRecording') ; 
+            }
+            ready() {
+                super.ready();
+                if (this.type === 'recent') {
+                    this._getData();
+                }
+                this.rendered = true;
+                Polymer.RenderStatus.afterNextRender(this, function () {
+                    this.addEventListener('play-recording', e => this._onPlayRecording(e));
+                    this.addEventListener('play-demo-recording', e => this._onPlayRecording(e));
+                    this.addEventListener('prompt-dialog-action', e => this._onPromptDialogAction(e));
+                    this.addEventListener('lower-threshold', e => this._getData(e));
+                    this.addEventListener('icon-click', e => this._iconAction(e));
+                    this.addEventListener('iron-select', e => this._menuAction(e));
+                    this.addEventListener('delete-card', e => this._deleteCard(e));
+                    this.addEventListener('edit-card', e => this._editCard(e));
+                    this.addEventListener('select-collection', e => this._addToCollection(e));
+                    this.addEventListener('addToCollection', e => this._showCollection(e));
+                });
+            }
+        }
+        customElements.define('ac-list', ACList);
+    </script>
+</dom-module>

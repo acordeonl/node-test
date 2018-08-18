@@ -1,0 +1,155 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/local-dom/local-dom.html">
+
+<link rel="import" href="../ac-components/ac-tags-input.html" >
+
+
+<dom-module id="edit-card-form">
+    <template>
+        <style>
+            [mobile] [uploadDialogWrapper]{
+                width: 100% ;
+            }
+            [uploadDialogWrapper]{
+                width: 380px ;  
+            }
+            [upload-dialog-input]{
+                margin-bottom: 20px ;
+            }
+            paper-input{
+                --paper-input-container-label: {
+                    font-size: 19px;
+                    font-weight: 300;
+                    color:var(--content-color) ;
+                };
+                --paper-input-container-input: {
+                    font-size: 20px;
+                    font-weight: 300;
+                    color:var(--content-color) ;
+                };
+            }
+            paper-icon-button {
+                margin-top: 21px; 
+                margin-left: 20px ;
+                background-color: var(--background-color1);
+                color: var(--paper-icon-color);
+                border-radius: 100%;
+            }
+            paper-icon-button:hover {
+                color: var(--theme-color1);
+            }
+            ac-tags-input{
+                margin-bottom: 30px ;
+                margin-top:40px ; 
+            }
+            paper-textarea{
+                font-size: 30px;
+                margin-bottom: 30px ; 
+            }
+            [url-input-wrapper]{
+                @apply --layout-horizontal;
+            }
+            [mobile] [url-input]{
+                width: 175px ; 
+            }
+            [url-input]{
+                width:317px ;
+            }
+        </style>
+        <local-dom mobile="{{mobile}}" tablet="{{tablet}}" desktop="{{desktop}}" page$=[[page]]>
+            <div uploadDialogWrapper>
+
+                <!-- <paper-input no-label-float auto-validate maxlength='70'
+                    id='searchInput' 
+                    on-keydown="checkForEnter" 
+                    label="{{t2('searchRecording')}}" 
+                    allowed-pattern="[^&quot;'=+*&.,~^:?¿!¡$#%{}()/><\][\\\x22;|]+">
+                </paper-input>
+
+                    alloauto-validate maxlength='42'wed-pattern="[^&quot;'=+*&.,~^:?¿!¡$#%{}()/><\][\\\x22;|]+"
+
+                    <paper-input id='inputEmail' auto-validate maxlength='42'
+                    value={{email}} label="{{t('email')}}"
+                    pattern='^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+                    error-message="{{t('emailIsInvalid')}}">  -->
+
+                <paper-input auto-validate maxlength='70'
+                    upload-dialog-input 
+                    label="{{t('title')}}" 
+                    value="{{title}}"
+                    allowed-pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
+                    pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
+                    error-message="{{t('titleIsInvalid')}}"></paper-input>
+                <template is="dom-if" if="[[isViewAudio]]">
+                    <div url-input-wrapper>
+                        <paper-input auto-validate maxlength='200'
+                            url-input 
+                            upload-dialog-input 
+                            label="{{t('url')}}" 
+                            value="{{url}}" 
+                            pattern="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)"
+                            error-message="{{t('urlIsInvalid')}}"
+                            >
+                        </paper-input> 
+                    </div>
+                </template>
+                <template is="dom-if" if="[[hasValues]]">
+                    <paper-textarea always-float-label rows='2' label="{{t('description')}}" value="{{description}}" ></paper-textarea>
+                </template>
+                <template is="dom-if" if="[[!hasValues]]">
+                    <paper-textarea rows='2' label="{{t('description')}}" value="{{description}}" maxlength='500' char-counter ></paper-textarea>
+                </template>
+            </div>
+        </local-dom>
+    </template>
+    <script>
+        class EditCardForm extends Polymer.Element {
+            static get is() { return 'edit-card-form'; }
+            static get properties() {return {
+                forUpload:{type:Boolean,value:false},
+                hasValues:{type:Boolean,value:false},
+                isViewAudio:{type:Boolean,value:false},
+                title:{type:String,notify:true},
+                tags:{type:String,notify:true},
+                url:{type:String,notify:true},
+                description:{type:String,notify:true},
+                license:{type:String,notify:true}
+            }}
+            constructor() {
+                super();
+            }
+            async _cleanRecordingInputData() {
+                if(this.isViewAudio || !this.forUpload)
+                    return ;
+                await cleanUploadRecordingInputDataPromise ; 
+                this.set('title' ,'') ; 
+                this.set('tags' ,'') ; 
+                this.set('description' ,'') ; 
+                this.set('hasValues' , false) ; 
+                this.shadowRoot.querySelector('ac-tags-input').clear() ;
+                cleanUploadRecordingInputDataPromise = new Promise(resolve => cleanUploadRecordingInputDataPromiseR = resolve);
+                this._cleanRecordingInputData() ; 
+            }
+            async _cleanViewAudioInputData(){
+                if(!this.isViewAudio || !this.forUpload)
+                    return ; 
+                await cleanUploadViewAudioInputDataPromise ; 
+                this.set('title' ,'') ; 
+                this.set('tags' ,'') ; 
+                this.set('url' ,'') ; 
+                this.set('description' ,'') ; 
+                this.set('hasValues' , false) ; 
+                this.shadowRoot.querySelector('ac-tags-input').clear() ;
+                cleanUploadViewAudioInputDataPromise = new Promise(resolve => cleanUploadViewAudioInputDataPromiseR = resolve);
+                this._cleanViewAudioInputData() ; 
+            }
+            ready() {
+                super.ready() ;
+                this._cleanRecordingInputData() ; 
+                this._cleanViewAudioInputData() ; 
+            }
+        }
+        customElements.define('edit-card-form', EditCardForm);
+    </script>
+</dom-module>

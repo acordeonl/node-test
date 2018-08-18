@@ -1,0 +1,134 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html" async> 
+<link rel="import" href="../../bower_components/iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html" async>
+
+<dom-module id="ac-tags-input">
+    <template>
+        <style>
+            :host {
+              display: block;
+            }
+
+            :host([focused]) {
+              outline: none;
+            }
+
+            :host([hidden]) {
+              display: none !important;
+            }
+
+            [wrapper]{
+                width: 100% ;   
+            }
+            paper-icon-button{
+                height:30px;
+                width:30px;
+                margin-top: 2px ;
+                margin-right: 2px ;
+            }
+            [tags] {
+                font-weight: 300;
+                font-size: 16px;
+                width: 90%;
+                line-height: 2.0 ; 
+            }
+            [tag]{
+                margin-bottom:10px ;
+                margin-right: 10px ;
+                padding-left: 13px ;
+                background-color: var(--theme-color1) ; 
+                border-radius: 3px ; 
+                color: var(--content-background,#fafafa) ;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+                0 1px 5px 0 rgba(0, 0, 0, 0.12),
+                0 3px 1px -2px rgba(0, 0, 0, 0.2);
+                display: inline-block ; 
+            }
+        </style>
+        <div wrapper>
+            <div tags >
+                <template id="domRepeat" list is="dom-repeat" items="{{tags}}" as="tag">
+                    <span tag>
+                        {{tag}}
+                        <paper-icon-button id='tag_[[index]]' on-click='_removeTag' icon="close"></paper-icon-button>
+                    </span>
+                </template>
+            </div>
+            <paper-input auto-validate maxlength='25'
+                no-label-float 
+                label="{{t('tags')}}" 
+                value='{{tagInput}}'
+                allowed-pattern="[^&quot;=+*&.,~^:?¿'_@°!¡$#%{}()/><\][\\\x22;|]+"
+                pattern="[^&quot;=+*&.,~^:?¿'_@°!¡$#%{}()/><\][\\\x22;|]+">
+            </paper-input>
+        </div>
+    </template>
+    <script>
+        class ACTagsInput extends Polymer.mixinBehaviors([Polymer.IronA11yKeysBehavior], Polymer.Element)  {
+            static get is() { return 'ac-tags-input'; }
+            get keyBindings(){
+              return {
+                'enter': '_addTag',
+                'tab': '_addTag',
+                'space:keypress': '_addTag'
+              };
+            }
+            static get properties() {return {
+                tagInput:{type:String},
+                tags:{type:Array,value:[]},
+                value:{type:String,notify:true,observer:'_updateTags'},
+            }}
+            _updateTags(value) {
+                if(this.value === undefined)
+                    return ;
+                this.set('tags', []) ; 
+                if(this.value.length > 0 )
+                    this.set('tags', value.split(',') ) ; 
+                else   
+                    this.set('tags', []) ; 
+            }
+            _removeTag(e) {
+                let tagIndex = parseInt(e.currentTarget.id.split('_')[1]) ; 
+                this.value = (this.tags.slice(0,tagIndex).concat(this.tags.slice(tagIndex+1,this.tags.length))).toString() ; 
+            }
+            clear() {
+                this.set('tagInput', '') ; 
+                this.set('value', '') ; 
+                this.set('tags', []) ; 
+            }
+            async _addTag() {
+                if(this.tagInput === undefined)
+                    return ; 
+                this.tagInput = this.tagInput.replace(/\s/g, "") ; 
+                if(this.tagInput.length === 0)
+                    return ;
+                
+                if(this.tags.length > 7){
+                    this.dispatchEvent(new CustomEvent('toast', {detail:{
+                        msg:this.t('addTagLimit')
+                    }, bubbles: true, composed: true }));
+                    return ; 
+                }
+
+
+                for(let i = 0 ; i < this.tags.length ; i ++ )
+                    if(this.tags[i] === this.tagInput)
+                        return ; 
+
+                this.tags.push(this.tagInput) ; 
+                this.value = this.tags.toString() ; 
+
+                await sleep(20); 
+                this.tagInput = '' ; 
+            }
+            t(c , arg) {
+                return i18next.t('editCardForm.'+c , arg) ; 
+            }
+            constructor() {
+                super();
+            }
+        }
+        customElements.define('ac-tags-input', ACTagsInput);
+    </script>
+</dom-module>

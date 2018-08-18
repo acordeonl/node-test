@@ -1,0 +1,30 @@
+async function acFetch(url, body , url_base) {
+    // if(url_base === undefined)
+    //     url_base = 'db' ; 
+    // body.user = app_user;
+    // body.ref = app_ref;
+    // if(!body.query)
+    //     body.query = '' ; 
+
+    // console.log(url,body);
+    // response = await fetch('/'+url_base + url, {
+    //     method: 'post',
+    //     headers: new Headers({'Content-Type': 'application/json'}),
+    //     body: JSON.stringify(body)
+    // }) ; 
+    console.log('entro');
+    response = {"data":[{"_id":"5b5f7b548ff0510e5ff99429","title":"mono test 2","description":"","tags":"test,randomTest,mono279","hasMetronome":false,"metronome_BPM":147,"metronome_beatsPerBar":4,"user":"cbarr_cba","license":"CC BY","duration":11,"voices":"mono","recordedWith":"piano","acViewId":"5a5afba3fa7f8c742aa7e2ea","acViewType":"universal","acViewPitch":-1,"default_acViewPitch":-1,"url":"https://recs.ac-assets.net/1532984147624.mid","date":"2018-07-30T20:55:47.715Z","sub":"117386444013605784860"},{"_id":"5b5f7ae18ff0510e5ff99428","title":"Cumpleaños Feliz - Happy Birthday","description":"Para alumnos principiantes","tags":"principante,beginner,acordeonJuguete,Cump040","hasMetronome":false,"metronome_BPM":147,"metronome_beatsPerBar":4,"user":"cbarr_cba","license":"CC BY","duration":12,"voices":"mono","recordedWith":"toy-accordion","acViewId":"5b2d472d7c071e3ac4bcef6e","acViewType":"universal","acViewPitch":-1,"default_acViewPitch":-1,"url":"https://recs.ac-assets.net/1532984031923.mid","date":"2018-07-30T20:53:52.183Z","sub":"117386444013605784860"},{"_id":"5b4e51927ee25c449f7c2f74","title":"monophonic test on accordion","description":"test","tags":"monophonic,test,accordion,mono198","hasMetronome":false,"metronome_BPM":120,"metronome_beatsPerBar":4,"user":"cbarr_cba","license":"CC BY","duration":7,"voices":"mono","recordedWith":"accordion","acViewHasMIDINoteMapping":true,"acViewId":"5a5afb54fa7f8c742aa7e2d7","acViewType":"accordion","acViewPitch":55,"default_acViewPitch":55,"url":"https://recs.ac-assets.net/1531859338852.mid","date":"2018-07-17T20:28:59.630Z","sub":"117386444013605784860"},{"_id":"5b4cf30cb757c50e4762c132","title":"bass solo test","description":"probando test","tags":"bass408","hasMetronome":false,"metronome_BPM":120,"metronome_beatsPerBar":4,"user":"cbarr_cba","license":"CC BY","duration":5,"voices":"poly","recordedWith":"acbass","acViewId":"5b4402299b39f5af006e91bd","acViewType":"strings","acViewPitch":43,"default_acViewPitch":43,"url":"https://recs.ac-assets.net/1531769606529.mid","date":"2018-07-16T19:33:27.234Z","sub":"117386444013605784860"},{"_id":"5b4c204626a3bf0eced56a61","title":"tags test","description":"test","tags":"tags499","hasMetronome":true,"metronome_BPM":184,"metronome_beatsPerBar":4,"user":"cbarr_cba","license":"CC BY","duration":10,"voices":"poly","recordedWith":"piano","acViewId":"5a5afba3fa7f8c742aa7e2ea","acViewType":"universal","acViewPitch":-1,"default_acViewPitch":-1,"url":"https://recs.ac-assets.net/1531715644030.mid","date":"2018-07-16T04:34:05.646Z","sub":"117386444013605784860"},{"_id":"5b4c1e0926a3bf0eced56a60","title":"tagtest","description":"test","tags":"tagt434","hasMetronome":true,"metronome_BPM":184,"metronome_beatsPerBar":4,"user":"cbarr_cba","license":"CC BY","duration":13,"voices":"poly","recordedWith":"piano","acViewId":"5a5afba3fa7f8c742aa7e2ea","acViewType":"universal","acViewPitch":-1,"default_acViewPitch":-1,"url":"https://recs.ac-assets.net/1531715077281.mid","date":"2018-07-16T04:24:38.036Z","sub":"117386444013605784860"},{"_id":"5b47b57753087e11383d9e9e","title":"test from keyboard","description":"","tags":"","hasMetronome":false,"metronome_BPM":120,"metronome_beatsPerBar":4,"user":"cbarr_cba","license":"CC BY","duration":10,"voices":"poly","recordedWith":"piano","acViewId":"5a5afba3fa7f8c742aa7e2ea","acViewType":"universal","acViewPitch":-1,"default_acViewPitch":-1,"url":"https://recs.ac-assets.net/1531426158505.mid","date":"2018-07-12T20:09:19.630Z","sub":"117386444013605784860"},{"_id":"5b457d62ac54e5346b06b2b2","title":"The Lone Ranger theme song","description":"trumpet","tags":"trumpet,test,TheL655","hasMetronome":false,"metronome_BPM":120,"metronome_beatsPerBar":4,"user":"cbarr_cba","license":"CC BY","duration":89,"voices":"mono","recordedWith":"trumpet","acViewId":"5b456cb94551e4156286f832","acViewType":"universal","acViewPitch":70,"default_acViewPitch":72,"url":"https://recs.ac-assets.net/1531280734952.mid","date":"2018-07-11T03:45:36.328Z","sub":"117386444013605784860"},{"_id":"5b45591fac54e5346b06b2b1","title":"Somewhere over the rainbow","description":"test","tags":"ukelele,test,Some108","hasMetronome":false,"metronome_BPM":120,"metronome_beatsPerBar":4,"user":"cbarr_cba","license":"CC BY","duration":169,"voices":"poly","recordedWith":"ukelele","acViewId":"5b44ed804551e4156286c993","acViewType":"strings","acViewPitch":69,"default_acViewPitch":69,"url":"https://recs.ac-assets.net/1531271452466.mid","date":"2018-07-11T01:10:53.034Z","sub":"117386444013605784860"},{"_id":"5b455207ac54e5346b06b2b0","title":"Can't help falling in Love - Elvis Presley","description":"Music by Neil aDriane","tags":"ukelele,standardTuning,Can'544","hasMetronome":false,"metronome_BPM":120,"metronome_beatsPerBar":4,"user":"cbarr_cba","license":"CC BY","duration":120,"voices":"poly","recordedWith":"ukelele","acViewId":"5b44ed804551e4156286c993","acViewType":"strings","acViewPitch":69,"default_acViewPitch":69,"url":"https://recs.ac-assets.net/1531269634288.mid","date":"2018-07-11T00:40:34.946Z","sub":"117386444013605784860"}],"ref":"f1svwhmfc"}
+
+
+    if(response.status === 200)  {
+        response = await response.json() ; 
+    }
+    else {
+        if(response.status === 500)
+            throw 'serverInternalError' ; 
+        if(response.status > 500 && response.status < 600)
+            throw 'serverIsDown' ;
+    }
+    
+    return response.data;
+}

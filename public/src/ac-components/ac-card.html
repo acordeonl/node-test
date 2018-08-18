@@ -1,0 +1,501 @@
+<imports >
+    <link rel="import" href='../../bower_components/polymer/polymer-element.html'>
+    <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+    <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+    <link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+    <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
+    <link rel="import" href="../../bower_components/iron-icon/iron-icon.html" >
+    <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+</imports>
+<icon-imports >
+    <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+    <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+    <link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+    <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+    <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+</icon-imports>
+
+<dom-module id="ac-card">
+    <template>
+        <styles >
+            <style middle>
+                iron-icon {
+                    margin-bottom: 3px;
+                    color: var(--background-color0,#D7D3D1);
+                }
+                iron-icon[isViewAudio] {
+                    /* margin-bottom: 3px; */
+                    color: var(--theme-color12,#4775D1);
+                }
+                [middle] {
+                    color: var(--title-color,#212121);
+                    margin-top: 8px;
+                    font-size: 17px;
+                }
+            </style>
+            <style bottom>
+                paper-icon-button {
+                    background-color: var(--background-color1,#E5E1DF);
+                    color: var(--paper-icon-color,#fafafa);
+                    border-radius: 100%;
+                    height: 41px;
+                    width: 41px;
+                }
+                paper-icon-button:hover {
+                    color: var(--theme-color1,#4775D1);
+                }
+                [bottom] {
+                    user-select: text ; 
+                    font-size: 20px;
+                    font-weight: 500;
+                    color: black;
+                    margin-left: 5px;
+                    width: 100%;
+                    @apply --layout-center;
+                    @apply --layout-horizontal;
+                    @apply --layout-justified;
+                }
+                [acViewType] {
+                    background-color: var(--background-color0,#efebe9) ; 
+                    color:var(--background-color3,#efebe9) ; 
+                    font-weight: 400 ; 
+                    border-radius: 4px ;
+                    padding-right:5px ;
+                    padding-left:5px ; 
+                    padding-top:2px ;
+                    padding-bottom:2px ;
+                }
+                [cardTitle] {
+                    font-weight: 400 ; 
+                    opacity: 0.7 ; 
+                    line-height: 1.5 ; 
+                }
+                [duration] {
+                    font-weight: 400  ;
+                    font-size: 17px ;
+                    background-color: var(--background-color0,#efebe9) ; 
+                    color:var(--background-color3,#efebe9) ; 
+                    border-radius: 5px ; 
+                    margin-right: 5px ;
+                    padding-top:3px ; 
+                    padding-bottom:3px ; 
+                    padding-right:6px ;
+                    padding-left:7px ;
+                    @apply --layout-center;
+                }
+                [tags] {
+                    margin-top: 5px ; 
+                    font-weight: 300;
+                    font-size: 16px;
+                    width: 90%;
+                    line-height: 2.5 ; 
+                    user-select: text;
+                }
+                [tag]{
+                    height: 20px ;
+                    padding:5px ;
+                    padding-right: 7px ;
+                    padding-left: 7px ;
+                    background-color: var(--theme-color1) ; 
+                    margin:4px ; 
+                    border-radius: 3px ; 
+                    color: var(--content-background,#fafafa) ;
+                    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+                    0 1px 5px 0 rgba(0, 0, 0, 0.12),
+                    0 3px 1px -2px rgba(0, 0, 0, 0.2);
+                }
+                [info] {
+                    width: 20%;
+                    @apply --layout-end-justified;
+                    @apply --layout-horizontal;
+                }
+                [more] {
+                    margin-right: 0;
+                    margin-left: 0;
+                    background-color: var(--background-color1,#E5E1DF);
+                    height: 41px;
+                    width: 41px;
+                    margin-top: 10px;
+                }
+                [votes] {
+                    color: var(--title-color,#212121);
+                }
+            </style>
+            <style cardInfo>
+                iron-collapse {
+                    width: 100%;
+                    margin-left: 5px;
+                }
+                #licenseLink:hover{
+                    color: var(--theme-color1,#4775D1);
+                    cursor: pointer ; 
+                }
+                [details] {
+                    margin-top: 10px ;
+                    width: 100%;
+                    @apply --layout-horizontal;
+                    @apply --layout-justified;
+                }
+                [property]{
+                    margin-bottom: 5px ;
+                }
+                [cardInfo] {
+                    font-size: 16px;
+                    margin-left: 5px;
+                    margin-right: 30px;
+                    user-select: text;
+                }
+                [description] {
+                    padding: 12px;
+                    margin-right: 7px;
+                    margin-bottom: 5px;
+                    user-select: text ; 
+                    @apply --justify-text;
+                    @apply --layout-horizontal;
+                    @apply --layout-justified;
+                }
+                [bold] {
+                    font-weight: 500;
+                }
+                paper-button {
+                    background-color: var(--theme-color1,#4775D1);
+                    color: white;
+                    margin-top: 20px;
+                    margin-left: 20px;
+                }
+                [extra-buttons] {
+                    margin-top: 5px ;
+                    @apply --layout-center;
+                    @apply --layout-vertical;
+                    @apply --layout-justified;
+                }
+                [extra-icon] {
+                    margin-top: 2px ;
+                    background-color: var(--background-color1,#E5E1DF);
+                    height: 41px;
+                    width: 41px;
+                }
+            </style>
+            <style>
+                :host {
+                    color:var(--title-color0,#1D1D1D) ;
+                }
+                .hide{
+                    visibility: hidden ; 
+                }
+                [listItem] {
+                    font-size: 18px;
+                    margin-bottom: 20px;
+                    padding: 20px 20px 13px;
+                    border-radius: 4px;
+                    opacity: 0.95;
+                    background-color: var(--background-color,#efebe9);
+                    position: relative;
+                    @apply --layout-vertical;
+                }
+                [listItem]:hover {
+                    opacity: 1;
+                }
+                [top] {
+                    font-size: 19px;
+                }
+                [clickArea] {
+                    @apply --no-user-select;
+                    -webkit-tap-highlight-color:rgba(0,0,0,0);
+                    margin-left: 5px;
+                    cursor: pointer;
+                }
+                [clickArea][no-click]{
+                    cursor: default ;
+                }
+            </style>
+            <style dialog>
+                paper-input {
+                    --paper-input-container-label: {
+                        color: var(--title-color,#212121);
+                        font-size: 18px;
+                        font-weight: 300;
+                    };
+                    --paper-input-container-input: {
+                        color: var(--title-color,#212121);
+                        font-size: 20px;
+                        font-weight: 300;
+                    };
+                }
+            </style>
+        </styles>
+        <div listItem>
+            <div clickArea no-click$=[[noClick]] id="{{cardId}}" on-click="_selectCard">
+                <template is="dom-if" if="[[!noClick]]" >
+                    <paper-ripple></paper-ripple>
+                </template>
+                <div top>
+                    <template is="dom-if" if="[[!isViewAudio]]">
+                        <span duration> duracion </span>
+                        <template is="dom-if" if="[[isDemo]]">
+                            <span cardTitle> titulo Demo </span>
+                        </template>
+                    </template>
+                    <template is="dom-if" if="[[isViewAudio]]">
+                        <iron-icon isViewAudio icon="av:volume-up"></iron-icon>
+                        <template is="dom-if" if="[[isDemo]]">
+                            <span cardTitle> titulo </span>
+                        </template>
+                    </template>
+                    
+                    <template is="dom-if" if="[[!isDemo]]">
+                        <span cardTitle> titlu </span>
+                    </template>
+                </div>
+                <div middle>
+                    <iron-icon icon="social:person-outline"></iron-icon>
+                    {{user}}
+                    &nbsp
+                    <template is="dom-if" if="[[!isViewAudio]]">
+                        <iron-icon icon="image:remove-red-eye"></iron-icon>
+                        <!-- {{acView}} -->
+                    </template>
+                </div>
+            </div>
+            <div bottom>
+                <div tags >
+                    <template is="dom-if" if="[[!isViewAudio]]">
+                        <span tag style="opacity:0.8; font-weight: 400;"> {{acViewType}} </span>
+                    </template>
+                    <template id="domRepeat" list is="dom-repeat" items="{{_tagsShort(tags)}}" as="tag">
+                        <span tag>{{tag}}</span>
+                    </template>
+                </div>
+                <div info>
+                    <div style="width:41px; height:41px; margin-bottom: 10px ; ">
+                        <paper-icon-button main-icon id=[[icon1Id]] on-click='_action' more icon="expand-more"></paper-icon-button>
+                    </div>
+                </div>
+            </div>
+            <iron-collapse id="collapse">
+                <div details>
+                    <div cardInfo>
+                        <div tags style="margin-bottom: 20px;">
+                            <template id="domRepeat" list is="dom-repeat" items="{{_tagsLong(tags)}}" as="tag">
+                                <span tag>{{tag}}</span>
+                            </template>
+                        </div>
+                        <div property>
+                            <span bold>{{t('date')}}:</span>&nbsp{{_formatDate(date)}}
+                        </div>
+                        <template is="dom-if" if="[[!isViewAudio]]">
+                            <div property>
+                            </div>
+                        </template>
+                        <div property>
+                            <span bold>{{t2('license')}}:</span> &nbsp <span on-click='_openLicenseLink' id='licenseLink'>{{license}}</span> 
+                        </div>
+                    </div>
+                    <div extra-buttons>
+                        <template is="dom-if" if="[[icon2]]">
+                            <!-- <div style="width:41px; height:41px;"> -->
+                                <paper-icon-button  index="{{id}}" on-click='_action' id='[[icon2]]' icon='[[icon2]]' extra-icon></paper-icon-button>
+                            <!-- </div> -->
+                        </template>
+                    </div>
+                </div>
+                <div description>
+                    {{description}}
+                </div>
+            </iron-collapse>
+        </div>
+    </template>
+    <script>
+        class ACCard extends Polymer.Element {
+            static get is() { return 'ac-card'; }
+            static get properties() {return {
+                isDemo:{type:Boolean,value:false},
+                hasDate:{type:Boolean,value:true},
+                isViewAudio:{type:Boolean,value:false},
+                hasMetronome:{type:Boolean},
+                url:{type:String},
+                acViewType:{type:String},
+                acView:{type:String},
+                cardTitle:{type:String},
+                user:{type:String},
+                voices:{type:String},
+                tags:{type:Array},
+                license:{type:String},
+                date:{type:Object},
+                duration:{type:String},
+                description:{type:String},
+                cardId:{observer:'hideCollapse'},
+                open:{type:Boolean,value:false},
+                icon1Id: {type: String,value: 'expand-more'},
+                noClick:{type:Boolean,value:false},
+                icon1: {type: String},
+                icon2: {type: String},
+                id: {type: String,value: ""}
+            }}
+            constructor() {
+                super();
+            }
+            _openLicenseLink(e) {
+                // let license = this.shadowRoot.querySelector('#'+e.currentTarget.id).innerHTML ; 
+                let url = 'https://creativecommons.org/licenses/' ; 
+                if(i18next.language.startsWith('es'))
+                    url += '?lang=es' ; 
+                window.open(url) ; 
+            }
+            _polyphony(voices) {
+                if(voices === 'poly')
+                    return this.t2('polyphonic') ; 
+                return this.t2('monophonic') ; 
+            }
+            _tagsShort(arg){
+                if(arg === undefined)
+                    return []; 
+                if(arg.length === 0)
+                    return [] ; 
+                let tags = arg.split(',') ; 
+                tags.sort(function(a, b){return b.length - a.length;});
+                let charLen = 23 ; 
+                if(this.isViewAudio)
+                    charLen = 30 ;
+                if(window.innerWidth < 500)
+                    charLen = 18 ; 
+                let res = []  ; 
+                for(let i = 0 ; i < tags.length  && charLen > 0 ; i ++ ){
+                    if(tags[i].length <= charLen) {
+                        res.push(tags[i])
+                        charLen -= tags[i].length ;
+                        // consider tag margin
+                        charLen -= 3 ; 
+                    }
+                }
+                return res ;
+            }
+            _tagsLong(arg) {
+                if(arg.length === 0)
+                    return [] ; 
+                let ref = this._tagsShort(arg) ; 
+                let tags = arg.split(',') ; 
+                let res = [] ; 
+                for(let i = 0 ; i < tags.length ; i ++ ){
+                    let flag = true ;
+                    for(let j = 0 ; j < ref.length ; j ++ ){
+                        if(tags[i] === ref[j])
+                            flag =false ;
+                    }
+                    if(flag)
+                        res.push(tags[i]) ; 
+                }
+                return res ;
+            }
+            _formatDate(date){
+                if(date === undefined)
+                    return '' ; 
+                try {
+                    let d = new Date(date) ; 
+                    return this.months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear() ; 
+                } catch (error) {
+                    return '' ; 
+                }
+            }
+            _formatDuration(time) {
+                let minutes = Math.floor(time/60) ; 
+                let seconds = time%60 ; 
+                if(seconds < 10)
+                    seconds = '0' + seconds ;
+                return minutes+':'+seconds ;
+            }
+            _setIcon (id, icon) {
+                this.shadowRoot.querySelector('#' + id).icon = icon;
+                this.icon1Id = icon;
+            }
+            hideCollapse(){
+                if(this.open){
+                    this.$.collapse.hide();
+                    this.open=false;
+                    this.shadowRoot.querySelector('[main-icon]').classList.remove('hide') ;
+                    this.shadowRoot.querySelector('[more]').icon = 'expand-more';
+                    this.icon1Id = 'expand-more';
+                }
+            }
+            async showDetails(){
+                if(this.open)
+                    return ;
+                this.open=true ;
+                this.$.collapse.show();
+                await sleep(50);
+                if(this.isViewAudio && this.icon1 === undefined) 
+                    this.shadowRoot.querySelector('[main-icon]').classList.add('hide') ;
+                else  
+                    this._setIcon('expand-more', this.icon1);
+            }
+            _action (e) {
+                if (e.currentTarget.id === 'expand-more') {
+                    this.showDetails() ;
+                }
+                if (e.currentTarget.id === 'delete' || e.currentTarget.id === 'icons:delete') {
+                    let index = parseInt(e.currentTarget.index.split ('_')[1]) ; 
+                    this.dispatchEvent(new CustomEvent('delete-card', {detail:{
+                        index:index,
+                        id: this.cardId,
+                        name: this.cardTitle
+                    }, bubbles: true, composed: true }));
+                }
+                if (e.currentTarget.id === 'editor:mode-edit' || e.currentTarget.id === 'icons:create' || e.currentTarget.id === 'create') {
+                    this.dispatchEvent(new CustomEvent('edit-card', {detail:{
+                        id: this.cardId,
+                        title: this.cardTitle,
+                        tags:this.tags,
+                        license:this.license,
+                        description:this.description,
+                        url:this.url
+                    }, bubbles: true, composed: true }));
+                }
+                if (e.currentTarget.id === 'av:playlist-add' || e.currentTarget.id === 'collection-add') {
+                    this.dispatchEvent(new CustomEvent('addToCollection', {detail:{
+                        name: this.cardTitle,
+                        id: this.cardId
+                    }, bubbles: true, composed: true }));
+                }
+            }
+            _selectCard (e) {
+                if(this.noClick)
+                    return ; 
+                if(this.isViewAudio){
+                    if(this.isDemo){
+                        this.dispatchEvent(new CustomEvent('update-view-audio', {detail:{
+                            viewAudioId:e.currentTarget.id,
+                            isDemo:true
+                        }, bubbles: true, composed: true }));
+                    }
+                    else {
+                        this.dispatchEvent(new CustomEvent('update-view-audio', {detail:{
+                            viewAudioId:e.currentTarget.id
+                        }, bubbles: true, composed: true }));
+                    }
+                }
+                else {
+                    if(this.isDemo){
+                        this.dispatchEvent(new CustomEvent('play-recording', {detail:{
+                            id:e.currentTarget.id,
+                            isDemo:true
+                        }, bubbles: true, composed: true }));
+                    }
+                    else {
+                        this.dispatchEvent(new CustomEvent('play-recording', {detail:{
+                            id: e.currentTarget.id
+                        }, bubbles: true, composed: true }));
+
+                    }
+                }
+            }
+            ready() {
+                super.ready() ;
+                if(this.type === 'viewAudios')
+                    this.isViewAudio = true ; 
+                this.addEventListener('select-collection', e => this._addToCollection(e));
+            }
+        }
+        customElements.define('ac-card', ACCard);
+    </script>
+</dom-module>

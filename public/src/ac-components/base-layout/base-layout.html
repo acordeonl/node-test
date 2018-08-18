@@ -1,0 +1,389 @@
+<imports>
+    <link rel="import" href='../../../bower_components/polymer/polymer-element.html'>
+    <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="../../../bower_components/local-dom/local-dom.html">
+    <link rel="import" href="../../../bower_components/drop-menu/drop-menu.html">
+    <link rel="import" href="../../../bower_components/polymer/lib/elements/dom-if.html">
+
+    <link rel="import" href="./page-css.html">
+</imports>
+
+<dom-module id="base-layout">
+    <template>
+        <style include='page-css'></style>
+        <style main>
+            [scroll] {
+                overflow-y: scroll;
+                overflow-x: hidden; 
+                scroll-behavior: smooth ; 
+                width: 100%;
+                height: 100%;
+                will-change: transform;
+            }
+
+            [blank] {
+                height: 25px;
+                width: 100%;
+            }
+
+            [componentHeader] {
+                @apply --layout-vertical;
+                @apply --layout-center;
+                width: 100%;
+            }
+
+            [header] {
+                width: 100%;
+                color: var(--content-color, #212121);
+                opacity: 0.5;
+                height: 50px;
+                @apply --layout-horizontal;
+                @apply --layout-center-justified;
+            }
+
+            [description] {
+                width: 66%;
+                font-size: 23px;
+                @apply --layout-center;
+                @apply --layout-horizontal;
+            }
+
+            [content] {
+                will-change: transform;
+                width: 100%;
+                @apply --layout-vertical;
+                @apply --layout-center;
+            }
+
+            [card] {
+                min-height: 300px;
+                @apply --layout-horizontal;
+                @apply --layout-justified;
+                width: 100%;
+                margin-bottom: 40px;
+                background-color: var(--content-background, #fafafa);
+            }
+
+            [desktop] [card] {
+                border-radius: 4px;
+            }
+
+            [list] {
+                height: 50%;
+                /*overflow: hidden;*/
+                @apply --layout-horizontal;
+                @apply --layout-center-justified;
+                width: 96%;
+                margin-top: 30px;
+                margin-bottom: 25px;
+            }
+
+            [listContent] {
+                width: 90%;
+            }
+
+            [color] {
+                border-top-right-radius: 4px;
+                border-bottom-right-radius: 4px;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+                width: 8px;
+                background-color: var(--layout-color);
+            }
+        </style>
+        <style toolbar>
+            paper-item:hover {
+                cursor: pointer;
+            }
+
+            paper-item {
+                --paper-item: {
+                    white-space: nowrap;
+                }
+                ;
+            }
+
+            paper-icon-button:hover {
+                color: var(--theme-color1, #4775D1);
+            }
+
+            iron-icon:hover {
+                color: var(--theme-color1, #4775D1);
+                cursor: pointer;
+            }
+
+            [toolbar] {
+                top: 0px;
+                left: 0;
+                width: 100%;
+                height: 0px;
+                color: var(--content-color2, #636363);
+                position: absolute;
+                ;
+                will-change: transform;
+                @apply --layout-horizontal;
+                @apply --layout-justified;
+            }
+
+            [exit-icon] {
+                height: 100%;
+                margin-left: 10px;
+                width: 12%;
+                margin-top: 30px;
+                @apply --layout-center;
+                @apply --layout-horizontal;
+            }
+
+            [right-icons] paper-icon-button {
+                margin-left: 20px;
+            }
+
+            [right-icons] drop-menu {
+                margin-left: 15px;
+                --icon-button: {
+                    height: 40px;
+                    width: 40px;
+                }
+                ;
+            }
+
+            [right-icons] {
+                margin-top: 30px;
+                height: 100%;
+                margin-right: 15px;
+                @apply --layout-horizontal;
+                @apply --layout-center;
+            }
+
+            paper-item:hover {
+                cursor: pointer;
+            }
+        </style>
+        <style mobile>
+            [mobile] [right-icons] {
+                margin-right: 5px;
+            }
+
+            [mobile] [right-icons] drop-menu {
+                margin-left: 10px;
+            }
+
+            [mobile] [blank] {
+                height: 25px;
+            }
+
+            [mobile] [description] {
+                width: 60%;
+                font-size: 22px;
+            }
+        </style>
+        <style tablet>
+            [tablet] [right-icons] paper-icon-button {
+                margin-left: 17px;
+            }
+
+            [tablet] [blank] {
+                height: 40px;
+            }
+
+            [tablet] [description] {
+                width: 75%;
+            }
+
+            [tablet] [right-icons] {
+                margin-right: 15px;
+            }
+
+            [tablet][page] [card] {
+                width: 100%;
+            }
+        </style>
+        <style>
+            [loading] {
+                width: 100%;
+                font-size: 22px;
+                @apply --layout-horizontal;
+                @apply --layout-center-justified;
+                @apply --layout-center;
+                margin-top: 100px;
+                position: relative;
+                color: gray;
+            }
+
+             :host {
+                --layout-color: var(--theme-color1);
+            }
+
+            local-dom {
+                height: 100%;
+                width: 100%;
+            }
+
+            drop-menu {
+                will-change: transform;
+            }
+        </style>
+        <local-dom mobile="{{mobile}}" tablet="{{tablet}}" desktop="{{desktop}}" page$=[[page]]>
+            <div scroll on-scroll='_checkScrollState'>
+                <div blank></div>
+                <template is="dom-if" if="[[!withHeader]]">
+                    <div header>
+                        <div description>
+                            <p>[[header]]</p>
+                        </div>
+                    </div>
+                </template>
+                <template is="dom-if" if="[[withHeader]]">
+                    <template is="dom-if" if="[[withHeaderTitle]]">
+                        <div header>
+                            <div description>
+                                <p>[[header]]</p>
+                            </div>
+                        </div>
+                    </template>
+                    <div componentHeader>
+                        <slot name="header"></slot>
+                    </div>
+                </template>
+                <div content>
+                    <div card>
+                        <div color></div>
+                        <div list>
+                            <div listContent>
+                                <slot name="content"></slot>
+                            </div>
+                            <template is="dom-if" if="[[loading]]">
+                                <div style="width: 90%;">
+                                    <div loading>
+                                        Cargando ...
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div toolbar>
+                <template is="dom-if" if="[[exitIcon]]">
+                    <div exit-icon>
+                        <paper-icon-button id="exitIcon" on-click="_iconClick" icon="[[exitIcon]]"></paper-icon-button>
+                    </div>
+                </template>
+                <div right-icons>
+                    <template is="dom-if" if="[[rightIcon]]">
+                        <paper-icon-button id="rightIcon" on-click="_iconClick" icon="[[rightIcon]]"></paper-icon-button>
+                    </template>
+                    <template is="dom-if" if="[[rightIcon2]]">
+                        <paper-icon-button id="rightIcon2" on-click="_iconClick" icon="[[rightIcon2]]"></paper-icon-button>
+                    </template>
+                    <template is="dom-if" if="[[rightIcon3]]">
+                        <paper-icon-button id="rightIcon3" on-click="_iconClick" icon="[[rightIcon3]]"></paper-icon-button>
+                    </template>
+                    <template is="dom-if" if="[[menu]]">
+                        <drop-menu list-items='{{menu}}'></drop-menu>
+                    </template>
+                </div>
+            </div>
+
+        </local-dom>
+    </template>
+    <script>
+        class BaseLayout extends Polymer.Element {
+            static get is() { return 'base-layout'; }
+            static get properties() {
+                return {
+                    moreOnDB:{type:Boolean,value:false},
+                    checkingScrollState:{type:Boolean,value:false},
+                    attachId: { type: Number, value:-1 },
+                    page: { type: Boolean },
+                    header: { type: String },
+                    exitIcon: { type: String },
+                    rightIcon: { type: String },
+                    rightIcon2: { type: String },
+                    rightIcon3: { type: String },
+                    attachedContent: { type: Boolean, value: true },
+                    contentNode: { type: Object },
+                    loading: { type: Boolean, value: true },
+                    shortList: { type: Boolean, value: false },
+                    withHeader: { type: Boolean, value: false },
+                    withHeaderTitle: { type: Boolean, value: false },
+                    menu: { type: Array },
+                    color: { type: String }
+                }
+            }
+            constructor() {
+                super();
+            }
+            onReceivedData() {
+                this.moreOnDB = true ;
+            }
+            async _checkScrollState() {
+                if(this.checkingScrollState)
+                    return ;
+                this.checkingScrollState = true ; 
+                await sleep(500);
+                let div = this.shadowRoot.querySelector('[scroll]') ; 
+                if(div.scrollHeight-div.offsetHeight-div.scrollTop < 310 && this.moreOnDB) {
+                    this.moreOnDB = false ; 
+                    this.dispatchEvent(new CustomEvent('lower-threshold', { bubbles: true, composed: true }));
+                }
+                this.checkingScrollState = false ;
+            }
+            _iconClick (e) {
+                var page = 0;
+                if (this.page !== undefined) {
+                    page = 1;
+                }
+                this.dispatchEvent(new CustomEvent('icon-click', {detail:{
+                    which: e.currentTarget.id,
+                    page: page
+                }, bubbles: true, composed: true }));
+            }
+            _getId() {
+                var d = new Date();
+                var n = d.getTime();
+                return n ; 
+            }
+            async connectedCallback() {
+                super.connectedCallback();
+                if(this.contentNode !== undefined) {
+                    this.loading=true ;
+                    this.attachId = this._getId() ; 
+                    var id = this.attachId ; 
+                    await sleep(900);
+                    if (!this.attachedContent && id === this.attachId) {
+                        this.loading = false ;
+                        this.shadowRoot.querySelector('[list]').appendChild(this.contentNode) ;
+                        this.attachedContent = true ;
+                        this.dispatchEvent(new CustomEvent('update-app-style', { bubbles: true, composed: true }));
+                    }
+                }
+                this.dispatchEvent(new CustomEvent('update-app-style', { bubbles: true, composed: true }));
+            }
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                this.attachId = -1 ; 
+                if(this.contentNode === undefined) {
+                    this.contentNode = this.shadowRoot.querySelector('[list]').firstElementChild;
+                }
+                if (this.attachedContent) {
+                    this.shadowRoot.querySelector('[list]').removeChild(this.contentNode) ;
+                    this.attachedContent = false ;
+                }
+            }
+            ready() {
+                super.ready() ;
+                // super.disconnectedCallback();
+                this.attachId = -1 ; 
+                if(this.contentNode === undefined) {
+                    this.contentNode = this.shadowRoot.querySelector('[list]').firstElementChild;
+                }
+                if (this.attachedContent) {
+                    this.shadowRoot.querySelector('[list]').removeChild(this.contentNode) ;
+                    this.attachedContent = false ;
+                }
+            }
+        }
+        customElements.define('base-layout', BaseLayout);
+    </script>
+</dom-module>

@@ -1,0 +1,95 @@
+<dom-module id="page-css">
+    <template>
+        <style>
+            [page] [content]{
+                background-color: var(--background-color2);
+            }
+            [page] [scroll]{
+                background-color: var(--background-color2);
+            }
+            [page] [blank]{
+                height:45px;
+            }
+            [page] [header]{
+                height:100px ;
+            }
+            [page] [description]{
+                width:600px ;
+                font-size: 26px;
+                margin-left: 30px;
+                color: var(--title-color1);
+                opacity: 1 ;
+            }
+            [page] [card]{
+                width:670px;
+                @apply --shadow-elevation-3dp;
+            }
+
+            [page] [toolbar]{
+                color:var(--title-color2) ;
+            }
+        </style>
+        <style mobile>
+            [mobile][page] [blank]{
+                height: 50px;
+            }
+            [mobile][page] [header]{
+                height: 90px;
+            }
+            [mobile][page] [description]{
+                width: 78% ;
+                font-size: 25px;
+            }
+            [mobile][page] [card] {
+                width: 100%;
+            }
+            [mobile][page] [color]{
+                border-top-right-radius:0px;
+                border-bottom-right-radius:0px;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+            }
+        </style>
+        <style desktop>
+            [desktop][page] [color]{
+                border-top-right-radius:0px;
+                border-bottom-right-radius:0px;
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+            }
+            [desktop][page] [exit-icon]{
+                margin-left: 30px ;
+            }
+            [desktop][page] [right-icons] paper-icon-button{
+                margin-left: 50px;
+            }
+            [desktop][page] [right-icons] drop-menu{
+                margin-left: 37px;
+            }
+            [desktop][page] [right-icons] {
+                margin-right:25px;
+                opacity: 1 ;
+            }
+        </style>
+        <style tablet>
+            [tablet][page] [blank]{
+                height:30px;
+            }
+            [tablet][page] [header]{
+                height: 130px;
+            }
+            [tablet][page] [description] {
+                width: 80% ;
+            }
+            [tablet][page] [right-icons] paper-icon-button{
+                margin-left: 30px;
+            }
+            [tablet][page] [color]{
+                border-top-right-radius:0px;
+                border-bottom-right-radius:0px;
+                border-top-left-radius: 0px;
+                border-bottom-left-radius: 0px;
+            }
+        </style>
+    </template>
+</dom-module>

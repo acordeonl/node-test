@@ -1,0 +1,34 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="/bower_components/neon-animation/neon-animations.html">
+
+
+<script>
+
+/**
+* Behavior that highlights stuff.
+*
+* @polymerBehavior
+*/
+
+    ScaleUpBehaviorImpl={
+        properties:{
+            animationConfig: {
+                value: function() {
+                    return {
+                        'entry': [{
+                            name: 'fade-in-animation',
+                            node: this,
+                            timing: {
+                                duration: 350,
+                                easing:'cubic-bezier(0.550, 0.055, 0.675, 0.190)'
+                            }
+                        }]
+                    };
+                }
+            }
+        },
+    };
+
+    ScaleUpBehavior = [Polymer.NeonAnimationRunnerBehavior,ScaleUpBehaviorImpl] ;
+</script>

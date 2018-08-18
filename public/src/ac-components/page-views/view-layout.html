@@ -1,0 +1,185 @@
+<imports >
+    <link rel="import" href='../../../bower_components/polymer/polymer-element.html'>
+    <link rel="import" href="../../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+    <link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
+    <link rel="import" href="../../../bower_components/local-dom/local-dom.html">
+    <link rel="import" href="./position-css.html">
+    <link rel="import" href="../base-layout/base-layout.html">
+</imports>
+
+<dom-module id="view-layout">
+    <template>
+        <style include="position-css"></style>
+        <style>
+            :host {
+                --height: 65%;
+                --width: 35%;
+                --margin-left: 30%;
+                --margin-right: 0;
+                height:100%;
+                width:100%;
+            }
+            local-dom {
+                height: 100%;
+                width: 100%;
+                @apply --layout-horizontal;
+                @apply --layout-center-justified;
+            }
+            [paper-material][container] {
+                height: var(--height);
+                width: var(--width);
+                margin-left: var(--margin-left);
+                margin-right: var(--margin-right);
+                background-color: var(--content-background);
+                display: block;
+                position: relative;
+                @apply --shadow-elevation-8dp;
+                border-radius: 10px ;
+            }
+            [closePage] {
+                height: 100%;
+                width: 100%;
+                position:absolute;
+                will-change: opacity ; 
+                background-color: var(--content-background,white);
+                opacity: 0.6;
+                top: 0;
+                left: 0;
+            }
+            [desktop] [paper-material] {
+                border-radius: 4px;
+            }
+            [mobile] [container],
+            [tablet] [container] {
+                width: 100%;
+                height: 100%;
+                margin-left: 0;
+                margin-right: 0;
+                border-radius: 0;
+            }
+            [content]{
+                height:100%;
+                width:100%;
+            }
+            .noDisplay{
+                display:none;
+            }
+        </style>
+        <local-dom mobile="{{mobile}}" tablet="{{tablet}}" desktop="{{desktop}}" class$={{position}}>
+            <div closePage on-click="_exit"></div>
+            <div paper-material container>
+                <slot></slot>
+            </div>
+            </paper-material>
+        </local-dom>
+    </template>
+    <script>
+        class ViewLayout extends Polymer.mixinBehaviors([Polymer.NeonAnimationRunnerBehavior], Polymer.Element) {
+            static get is() { return 'view-layout'; }
+            static get properties() {return {
+                id:{type:String},
+                path:{type:String},
+                position:{type:String},
+                route:{type:Object},
+                height: {type: String},
+                width: {type: String}
+            }}
+            constructor() {
+                super();
+            }
+            _iconAction (e) {
+                if (e.detail.which === 'exitIcon') {
+                    this._exit() ;
+                }
+            }
+            _exit(){
+                this.dispatchEvent(new CustomEvent('close-view', {detail:{
+                    id:this.id
+                }, bubbles: true, composed: true }));
+            }
+            ready() {
+                super.ready() ;
+                this.animationConfig =  {
+                    'entry': [
+                        {
+                            name: 'slide-from-top-animation',
+                            node: this.shadowRoot.querySelector('[paper-material][container]'),
+                            timing: {
+                                duration: 400
+                            }
+                        }
+                    ],
+                    'exit': [
+                        {
+                            name: 'fade-out-animation',
+                            node: this.shadowRoot.querySelector('LOCAL-DOM'),
+                            timing: {
+                                duration: 400
+                            }
+                        }, {
+                            name: 'slide-up-animation',
+                            node: this.shadowRoot.querySelector('[paper-material][container]'),
+                            timing: {
+                                duration: 400
+                            }
+                        }
+                    ]
+                };
+                this.updateStyles({'--height': this.height});
+                this.updateStyles({'--width': this.width});
+                if (this.position === 'top-right') {
+                    this.updateStyles({'--margin-left':'35%'});
+                    this.updateStyles({'--margin-right':'0%'});
+                    this.animationConfig.entry[0].name = 'slide-from-top-animation';
+                    this.animationConfig.exit[1].name = 'slide-up-animation';
+                }
+                if (this.position === 'top') {
+                    this.updateStyles({'--margin-left': '0%'});
+                    this.updateStyles({'--margin-right': '0%'});
+                    this.animationConfig.entry[0].name = 'slide-from-top-animation';
+                    this.animationConfig.exit[1].name = 'slide-up-animation';
+                }
+                if (this.position === 'top-left') {
+                    this.updateStyles({'--margin-left': '0%'});
+                    this.updateStyles({'--margin-right': '40%'});
+                    this.animationConfig.entry[0].name = 'slide-from-top-animation';
+                    this.animationConfig.exit[1].name = 'slide-up-animation';
+                }
+                if (this.position === 'left') {
+                    this.updateStyles({'--margin-left': '0%'});
+                    this.updateStyles({'--margin-right': '0%'});
+                    this.animationConfig.entry[0].name = 'slide-from-left-animation';
+                    this.animationConfig.exit[1].name = 'slide-left-animation';
+                }
+                if (this.position === 'bottom-left') {
+                    this.updateStyles({'--margin-left': '0%'});
+                    this.updateStyles({'--margin-right': '40%'});
+                    this.animationConfig.entry[0].name = 'slide-from-bottom-animation';
+                    this.animationConfig.exit[1].name = 'slide-down-animation';
+                }
+                if (this.position === 'bottom') {
+                    this.updateStyles({'--margin-left': '0%'});
+                    this.updateStyles({'--margin-right': '0%'});
+                    this.animationConfig.entry[0].name = 'scale-up-animation';
+                    this.animationConfig.exit[1].name = 'scale-down-animation';
+                }
+                if (this.position === 'bottom-right') {
+                    this.updateStyles({'--margin-left': '35%'});
+                    this.updateStyles({'--margin-right': '0%'});
+                    this.animationConfig.entry[0].name = 'slide-from-bottom-animation';
+                    this.animationConfig.exit[1].name = 'slide-down-animation';
+                }
+                if (this.position === 'right') {
+                    this.updateStyles({'--margin-left': '0%'});
+                    this.updateStyles({'--margin-right': '0%'});
+                    this.animationConfig.entry[0].name = 'slide-from-right-animation';
+                    this.animationConfig.exit[1].name = 'slide-right-animation';
+                }
+                Polymer.RenderStatus.afterNextRender(this, function() {
+                    this.addEventListener('icon-click', e => this._iconAction(e));
+                });
+            }
+        }
+        customElements.define('view-layout', ViewLayout);
+    </script>
+</dom-module>

@@ -1,0 +1,116 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/local-dom/local-dom.html">
+<link rel="import" href="../../bower_components/vaadin-combo-box/vaadin-combo-box.html" async>
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html" async >
+
+<dom-module id="license-select">
+    <template>
+        <style>
+            :host {
+              display: block;
+            }
+
+            :host([focused]) {
+              outline: none;
+            }
+
+            :host([hidden]) {
+              display: none !important;
+            }
+            [wrapper]{
+                display: block ; 
+                width:100% ; 
+                @apply --layout-around-justified;
+                @apply --layout-horizontal;
+            }
+            [elements]{
+                @apply --layout-center;
+                @apply --layout-horizontal;
+            }
+            paper-icon-button {
+                margin-top: 10px ;
+                margin-left: 100px ;
+                background-color: var(--background-color1);
+                color: var(--paper-icon-color);
+                border-radius: 100%;
+                margin-right: 5px;
+                margin-left: 5px;
+            }
+            paper-icon-button:hover {
+                color: var(--theme-color1);
+            }
+            [mobile] vaadin-combo-box{
+                width:150px ; 
+            }
+            vaadin-combo-box {
+                width:310px ; 
+                margin-left: 10px ;
+                margin-top: 0px ; 
+                padding-top: 0px ;
+                margin-right: 15px;
+                --paper-input-container-label: {
+                    font-size: 19px;
+                    font-weight: 300;
+                    color: var(--content-color);
+                };
+                --paper-input-container-input: {
+                    text-align:center ;
+                    font-size: 20px;
+                    font-weight: 300;
+                    color: var(--content-color);
+                };
+            }
+            [title]{
+                font-size: 19px ; 
+                margin-bottom: 0px ;
+            }
+        </style>
+        <local-dom mobile="{{mobile}}" tablet="{{tablet}}" desktop="{{desktop}}" page$=[[page]]>
+            <div wrapper >
+                <div elements>
+                    <vaadin-combo-box on-opened-changed='_comboBoxAction' label="{{t2('license')}}" value='{{value}}' required on-change='_validateComboBox' chords ></vaadin-combo-box>
+                    <paper-icon-button icon='info-outline' on-click='_goToLink' >  </paper-icon-button>
+                </div>
+            </div>
+        </local-dom>
+    </template>
+    <script>
+        class LicenseSelect extends Polymer.Element {
+            static get is() { return 'license-select'; }
+            static get properties() {return {
+                licenses:{type:Array,value:['CC BY','CC BY-SA','CC BY-ND','CC BY-NC','CC BY-NC-SA', 'CC BY-NC-ND', 'CC0']},
+                value:{type:String,value:'CC BY',notify:true}
+            }}
+            constructor() {
+                super();
+            }
+            _validateComboBox(e) {
+            }
+            _comboBoxAction(e) {
+                this.dispatchEvent(new CustomEvent('combo-box-action', {detail:{
+                    opened:e.detail.value
+                }, bubbles: true, composed: true }));
+            }
+            _goToLink() {
+                let url = 'https://creativecommons.org/licenses/' ; 
+                if(i18next.language.startsWith('es'))
+                    url += '?lang=es' ; 
+                window.open(url) ; 
+            }
+            t(c , arg) {
+                return i18next.t('editCardForm.'+c , arg) ; 
+            }
+            t2(c , arg ) {
+                return i18next.t(c , arg) ; 
+            }
+            ready() {
+                super.ready() ;
+
+                // var selectedItem = this.shadowRoot.querySelector('[chords]').selectedItem ;
+                this.shadowRoot.querySelector('[chords]').items = this.licenses ;
+                // this.shadowRoot.querySelector('[chords]').value = this.value ;
+            }
+        }
+        customElements.define('license-select', LicenseSelect);
+    </script>
+</dom-module>

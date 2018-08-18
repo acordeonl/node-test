@@ -1,0 +1,89 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-shared-element-animation-behavior.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
+
+<dom-module id="ripple-to">
+    <template>
+        <style>
+            :host{
+                --ripple-color:var(--theme-color1,#4775D1) ;
+            }
+            #to {
+                top: 0;
+                left: 0;
+                position: absolute;
+                width: 100vw;
+                height: 100vh;
+                opacity: 0;
+                background-color: var(--ripple-color);
+            }
+        </style>
+        <div id="to">
+        </div>
+        <div home>
+            <slot></slot>
+        </div>
+    </template>
+
+    <script>
+        class RippleTo extends Polymer.mixinBehaviors([Polymer.NeonSharedElementAnimatableBehavior], Polymer.Element)  {
+            static get is() { return 'ripple-to'; }
+            static get properties() {return {
+                ripple: {notify: true},
+                color:{type:String,value:'#4775D1'}
+            }}
+            constructor() {
+                super();
+            }
+            ready() {
+                super.ready() ;
+                this.animationConfig = {
+                    'entry': [{
+                        name: 'ripple-animation',
+                        toPage: this,
+                        id: 'ripple'
+                    }, {
+                        name: 'fade-out-animation',
+                        node: this.$.to,
+                        timing: {
+                            duration: 400
+                        }
+                    }, {
+                        name: 'fade-in-animation',
+                        node: this.shadowRoot.querySelector('[home]'),
+                        timing: {
+                            delay:100,
+                            duration: 300,
+                                easing:'cubic-bezier(0.02, 0.06, 0.85, -0.15)'
+                        }
+                    }],
+                    'exit': [{
+                        name: 'reverse-ripple-animation',
+                        id: 'ripple',
+                        fromPage: this,
+                        timing: {
+                            duration: 400,
+                                easing:'cubic-bezier(0, 0.81, 0.35, 0.98)'
+                        }
+                    }, {
+                        name: 'fade-out-animation',
+                        node: this.shadowRoot.querySelector('[home]'),
+                        timing: {
+                            duration: 250
+                        }
+                    }, {
+                        name: 'fade-out-animation',
+                        node: this.$.to,
+                        timing: {
+                            duration: 700,
+                                easing:'cubic-bezier(0, 0.81, 0.35, 0.98)'
+                        }
+                    }]
+                }
+                this.sharedElements = {'ripple': this.$.to};
+            }
+        }
+        customElements.define('ripple-to', RippleTo);
+    </script>
+</dom-module>

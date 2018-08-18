@@ -1,0 +1,246 @@
+<imports >
+    <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+    <link rel="import" href="../../../bower_components/paper-spinner/paper-spinner-lite.html" async>
+    <link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+    <link rel="import" href="../../../bower_components/paper-ripple/paper-ripple.html" async>
+    <link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+    <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+    <link rel="import" href="../../../bower_components/iron-icons/hardware-icons.html">
+    <link rel="import" href="../../../bower_components/iron-icons/social-icons.html">
+    <link rel="import" href="../../../bower_components/iron-icons/image-icons.html">
+    <link rel="import" href="../../../bower_components/iron-icons/av-icons.html">
+    <link rel="import" href="../../../bower_components/iron-icons/communication-icons.html">
+</imports>
+
+<dom-module id="collection-dialog">
+    <template>
+        <styles>
+            <style dialog title>
+                paper-icon-button {
+                    margin-left: -10px;
+                    margin-top: -20px;
+                    margin-right: 12px;
+                    color: var(--content-color2,#636363);
+                    border-radius: 100%;
+                }
+                paper-icon-button:hover {
+                    color: var(--theme-color1,#4775D1);
+                }
+                [dialog-title] {
+                    margin-bottom: 30px;
+                    @apply --layout-horizontal;
+                    @apply --layout-center;
+                    color: var(--content-color2,#636363);
+                }
+                [title] {
+                    width: 100%;
+                    color: var(--content-color2,#636363);
+                    @apply --layout-center-justified;
+                    @apply --layout-horizontal;
+                }
+                [exit-button-invisible] {
+                    visibility: hidden;
+                }
+            </style>
+            <style dialog-content>
+                [section-title] {
+                    margin-bottom: 20px;
+                    border-radius: 5px;
+                    opacity: 0.94;
+                    text-align: justified;
+                    background-color: var(--theme-color10,#3F69BC);
+                    color: var(--content-background2,#FBFBFB);
+                    position: relative;
+                    padding: 5px 20px;
+                }
+                [section-title]:hover {
+                    cursor: pointer;
+                    opacity: 1;
+                }
+            </style>
+            <style>
+                paper-spinner-lite {
+                    --paper-spinner-color: var(--theme-color1);
+                }
+                [scroll] {
+                    overflow-y: scroll;
+                    scroll-behavior: smooth ; 
+                    will-change: transform;
+                }
+                p {
+                    width: 100%;
+                    word-wrap: break-word;
+                }
+                paper-dialog {
+                    top: 10vh;
+                    will-change:transform ;
+                    font-size: 22px;
+                    font-weight: 300;
+                    width: 500px;
+                    height: 400px;
+                    overflow: auto;
+                    border-radius: 10px;
+                    background-color: var(--content-background,#fafafa);
+                }
+                [loading-more] {
+                    width: 100%;
+                    font-size: 19px;
+                    margin-bottom: 5px ; 
+                    @apply --layout-horizontal;
+                    @apply --layout-center-justified;
+                    @apply --layout-center;
+                    margin-top: 50px;
+                    color: var(--content-color, #212121);
+                }
+                [wrapper]{
+                    will-change:transform ;
+                    z-index: 200 ;
+                }
+                [message-holder] {
+                    width: 100%;
+                    font-size: 19px;
+                    @apply --layout-horizontal;
+                    @apply --layout-center-justified;
+                    @apply --layout-center;
+                    margin-top: 100px;
+                    color: var(--content-color, #212121);
+                }
+            </style>
+        </styles>
+        <paper-dialog scroll on-scroll='_checkScrollState' entry-animation="scale-up-animation" exit-animation="fade-out-animation" id="dialog" with-backdrop>
+            <div wrapper >
+                <div dialog-title>
+                    <div exit-button>
+                        <paper-icon-button on-click="close" icon="close"></paper-icon-button>
+                    </div>
+                    <div title>
+                        {{t('title')}}
+                    </div>
+                    <div exit-button-invisible>
+                        <paper-icon-button on-click="close" icon="close"></paper-icon-button>
+                    </div>
+                </div>
+                <template is="dom-if" if="[[!loading]]">
+                    <template is="dom-if" if="[[!collections.length]]">
+                        <div message-holder>
+                            {{t2('emptyList')}}
+                        </div>
+                    </template>
+                </template>
+                <template id="domRepeat" is="dom-repeat" items="{{collections}}" as="collection">
+                    <div on-click="_addToCollection" id="id_{{collection._id}}" collection-url={{collection.url}} collection-title={{collection.title}} section-title>
+                        <div>
+                            <p>{{collection.title}}</p>
+                        </div>
+                        <paper-ripple></paper-ripple>
+                    </div>
+                </template>
+                <template is="dom-if" if="[[loading]]">
+                    <div loading-more>
+                        <paper-spinner-lite active></paper-spinner-lite>
+                    </div>
+                </template>
+            </div>
+        </paper-dialog>
+    </template>
+    <script>
+        class CollectionDialog extends Polymer.Element {
+            static get is() { return 'collection-dialog'; }
+            static get properties() {return {
+                moreOnDB:{type:Boolean,value:false},
+                checkingScrollState:{type:Boolean,value:false},
+                collectionUpdateId:{type:String,value:''},
+                page:{type:Number,value:0},
+                collections: {
+                    type:Array,
+                    value:[],
+                    observer: '_updateList'
+                }
+            }}
+            constructor() {
+                super();
+                this.contentAttached = new Promise(resolve => this.contentAttachedR = resolve);
+            }
+            onReceivedData() {
+                this.moreOnDB = true ;
+            }
+            async _checkScrollState() {
+                if(this.checkingScrollState)
+                    return ;
+                this.checkingScrollState = true ; 
+                await sleep(500);
+                let div = this.shadowRoot.querySelector('[scroll]') ; 
+                if(div.scrollHeight-div.offsetHeight-div.scrollTop < 310 && this.moreOnDB) {
+                    this.moreOnDB = false ; 
+                    this._getData() ; 
+                }
+                this.checkingScrollState = false ;
+            }
+            _updateList () {
+                this.$.domRepeat.render();
+            }
+            _addToCollection (e) {
+                this.dispatchEvent(new CustomEvent('select-collection', {detail:{
+                    collectionId: e.currentTarget.id.split('_')[1],
+                    collectionTitle: this.shadowRoot.querySelector('#' + e.currentTarget.id).collectionTitle
+                }, bubbles: true, composed: true }));
+                this.close();
+            }
+            async _getData() {
+                await this.contentAttached ; 
+                try {
+                    this.loading = true ;
+                    let receivedData = await acFetch('/collections', {
+                        page:this.page
+                    }) ;  
+
+                    if(receivedData === undefined)
+                        this.set('collections', []) ; 
+                    else 
+                        this.set('collections', this.collections.concat(receivedData));
+
+                    this.page ++  ; 
+                    if(receivedData !== undefined && receivedData.length === app_elementsPerPage)
+                        this.onReceivedData() ; 
+                    this.loading = false ; 
+                }    
+                catch(e){
+                   this.dispatchEvent(new CustomEvent('fetch-error', {detail:{
+                       error:e
+                   }, bubbles: true, composed: true }));
+                   this.loading = false ;
+                } 
+            }
+            open () {
+                this.$.dialog.open();
+                let collectionUpdateIdRef = ls_get('collectionUpdateId') ;
+                if(!collectionUpdateIdRef)
+                    collectionUpdateIdRef = new Date().getTime() ; 
+                if(this.collectionUpdateId !== collectionUpdateIdRef){
+                    this.page = 0 ; 
+                    this.set('collections', []) ; 
+                    this.collections = []
+                    this._getData() ; 
+                    this.collectionUpdateId = collectionUpdateIdRef ; 
+                }
+            }
+            close () {
+                this.$.dialog.close();
+            }
+            connectedCallback() {
+                super.connectedCallback();
+                this.contentAttachedR() ; 
+            }
+            disconnectedCallback() {
+                super.disconnectedCallback();
+                this.contentAttached = new Promise(resolve => this.contentAttachedR = resolve);
+            }
+            ready() {
+                super.ready() ;
+                this.collections = [] ; 
+            }
+        }
+        customElements.define('collection-dialog', CollectionDialog);
+    </script>
+</dom-module>

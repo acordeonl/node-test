@@ -1,0 +1,225 @@
+<imports >
+    <link rel="import" href='../../bower_components/polymer/polymer-element.html'>
+    <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+    <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html" async>
+    <link rel="import" href="../../bower_components/drop-menu/drop-menu.html" async>
+</imports>
+
+<dom-module id="message-card">
+    <template>
+        <style menu>
+            paper-icon-button {
+                background-color: var(--background-color1,#E5E1DF);
+                color: var(--paper-icon-color,#fafafa);
+                border-radius: 100%;
+            }
+            drop-menu {
+                position: relative;
+                z-index: 100;
+                --icon-button: {
+                    background-color: var(--background-color1,#E5E1DF);
+                    color: var(--paper-icon-color,#fafafa);
+                    border-radius: 100%;
+                    height: 40px;
+                    width: 40px;
+                };
+            }
+            paper-icon-button:hover {
+                color: var(--theme-color1,#4775D1);
+            }
+            paper-item:hover {
+                cursor: pointer;
+            }
+            paper-item {
+                --paper-item: {
+                    white-space: nowrap;
+                };
+            }
+        </style>
+        <style top>
+            iron-icon {
+                margin-bottom: 3.5px;
+                margin-right: 2px;
+            }
+            [top] {
+                margin-top: 12px;
+                font-size: 17px;
+                width:100% ; 
+                @apply --layout-justified;
+                @apply --layout-horizontal;
+            }
+            [title] {
+                margin-left: 10px;
+                font-size: 18px;
+                color: var(--theme-color1,#4775D1);
+                margin-top: 12px;
+                font-weight: 400;
+            }
+            [commentContent] {
+                @apply --justify-text;
+                margin: 12px 10px 14px;
+                word-break: break-word ;
+            }
+        </style>
+        <style bottom>
+            [details] {
+                margin-top: 0;
+            }
+            [bottom] {
+                width: 98%;
+                margin-bottom: 7px;
+                color: var(--title-color,#212121);
+                @apply --layout-horizontal;
+                @apply --layout-center;
+                @apply --layout-justified;
+                font-size: 15px;
+            }
+            [likes] paper-icon-button {
+                background-color: var(--background-color1,#E5E1DF);
+                margin: 0;
+                height: 35px;
+                width: 35px;
+            }
+            [likes] {
+                margin-left: 10px;
+                @apply --layout-horizontal;
+                @apply --layout-center;
+            }
+            [liked] {
+                color: var(--theme-color1,#4775D1);
+            }
+            [likeCount] {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+            [date] {
+                margin-top: 5px;
+                /*margin-left: 0px;*/
+                margin-bottom: 3px;
+                margin-right: 5px;
+            }
+        </style>
+        <style>
+            [listItem] {
+                font-size: 18px;
+                margin-bottom: 20px;
+                padding-left: 15px;
+                padding-right: 13px;
+                padding-bottom: 10px;
+                border-radius: 4px;
+                opacity: 0.8;
+                background-color: var(--background-color,#efebe9);
+                position: relative;
+                @apply --layout-vertical;
+                color: var(--title-color0,#1D1D1D);
+            }
+            [middle] {
+                margin: 15px 5px 0;
+            }
+            [more] {
+                color: var(--theme-color1,#4775D1);
+                font-weight: 400;
+            }
+            [more]:hover {
+                cursor: pointer;
+                font-weight: 400;
+            }
+        </style>
+        <div listItem>
+            <div clickArea id="comment0">
+                <div top id="top">
+                    <div title>
+                        <iron-icon icon="{{titleIcon}}"></iron-icon>
+                        {{cardTitle}}
+                        &nbsp
+                    </div>
+                    <div >
+                        <template is="dom-if" if="[[menu]]">
+                            <drop-menu overlay-menu list-items='{{menu}}'></drop-menu>
+                        </template>
+                    </div>
+                   
+                </div>
+                <div middle>
+                    <div commentContent id="short">
+                        {{_getContentShort(content)}}
+                        <a more on-click="_expand">[+]</a>
+                    </div>
+                    <div commentContent id="long">
+                        {{content}}
+                    </div>
+                </div>
+                <div bottom>
+                    <div details>
+                        <slot name='content'> </slot>
+                    </div>
+                    <div date>
+                        {{_formatDate(date)}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <script>
+        class MessageCard extends Polymer.Element {
+            static get is() { return 'message-card'; }
+            static get properties() {return {
+                sub:{type:String,value:''},
+                cardTitle:{type:String},
+                months:{type:Array,value:[]},
+                titleIcon:{type:String},
+                content:{type:String},
+                contentShort:{type:String},
+                date:{type:String},
+                id: {type: String,value: ""},
+                menu: {type: Array}
+            }}
+            constructor() {
+                super();
+                this.months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dic'] ; 
+            }
+            _formatDate(date){
+                let d = new Date(date) ; 
+                return this.months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear() ; 
+            }
+            _getContentShort(content) {
+                if(content === null)
+                    return '' ; 
+                let lastSpace = 0 ; 
+                for(let i = 0 ; i < 120 ; i ++ )
+                    if(content[i] === ' ')
+                        lastSpace = i ; 
+                return content.substring(0,lastSpace)+' ...' ; 
+            }
+            _expand () {
+                this.$.short.style.display = "none";
+                this.$.long.style.display = "inline-block";
+                this.$.long.style.marginTop = 0;
+            }
+            _menuAction (e) {
+                e.preventDefault() ; 
+                e.stopPropagation() ; 
+                this.dispatchEvent(new CustomEvent('message-card-menu-action', {detail:{
+                    action: e.detail.id,
+                    id: this.id,
+                    sub:this.sub 
+                }, bubbles: true, composed: true }));
+            }
+            ready() {
+                super.ready() ;
+                if(this.content.length < 120) { 
+                    this.$.short.style.display = "none";
+                    this.$.long.style.display = "inline-block";
+                    this.$.long.style.marginTop = 0;
+                }
+                else {
+                    this.$.long.style.display = "none";
+                }
+                Polymer.RenderStatus.afterNextRender(this, function() {
+                    this.addEventListener('menu-action', e => this._menuAction(e));
+                });
+            }
+        }
+        customElements.define('message-card', MessageCard);
+    </script>
+</dom-module>

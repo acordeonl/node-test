@@ -1,0 +1,227 @@
+<link rel="import" href='../../bower_components/polymer/polymer-element.html'>
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<dom-module id="upgrade-view">
+    <template>
+        <style>
+            paper-button {
+                font-weight: 400;
+                margin-top: 30px;
+                color: var(--content-background);
+                font-size: 16px;
+                background-color: var(--theme-color1);
+                margin-bottom: 10px ;
+            }
+            [wrapper] {
+                @apply --justify-text;
+                @apply --layout-center;
+                @apply --layout-vertical;
+                @apply --layout-center-justified;
+            }
+            [loading]{
+                @apply --justify-text;
+                @apply --layout-center;
+                @apply --layout-vertical;
+                @apply --layout-center-justified;
+                font-size: 22px ;
+                color: gray ; 
+                height:160px;
+                width:100%;
+            }
+            [link]{
+                color: var(--theme-color1);
+                text-decoration: underline ;
+            }
+            [link]:hover{
+                cursor: pointer ;
+            }
+            [header]{
+                color: var(--theme-color1);
+                font-weight: 500 ; 
+            }
+            span{
+                font-weight: 800 ; 
+                color: var(--theme-color1);
+            }
+            [payment-button]{
+                text-transform: uppercase;
+                margin-top:20px ; 
+                width:100% ; 
+                padding: 12px ;
+                background-color: var(--theme-color1);
+                color: var(--content-background);
+                @apply --layout-center;
+                @apply --layout-horizontal;
+                @apply --layout-around-justified;
+                border-radius: 5px ;
+            }
+            [payment-button]:hover{
+                cursor: pointer ;
+            }
+            [payment-button-content]{
+                width: 84% ; 
+                @apply --layout-around-justified;
+                @apply --layout-vertical;
+                @apply --layout-center;
+                text-align: center;
+                font-weight: 400; 
+                font-size: 18px ;
+            }
+            [payment-button-logo]{
+                @apply --layout-center-justified;
+                @apply --layout-vertical;
+                @apply --layout-center;
+                height:100% ; 
+                width:16%;
+            }
+        </style>
+        <div wrapper>
+            <template is="dom-if" if="[[withPaymentURL]]">
+                <div style='width:105%'>
+                    
+                    <div info1 header info></div>
+                    <div listItem11 style='margin-top:15px;'></div>
+                    <div listItem12 ></div>
+                    <div listItem13></div>
+
+                    <div info2 header style='margin-top:20px'></div>
+                    <div listItem21 style='margin-top:15px;' ></div>
+                    <div listItem22 ></div>
+                    <div listItem23 ></div>
+
+                    <div style='margin-top:20px'>
+                        <div enableNotifications on-click='_enableNotifications' link style="display:inline"></div>
+                        <div info3 style='display:inline' ></div>
+                    </div>
+                </div>
+                <div payment-button on-click='_goToPayment'>
+                    <div payment-button-content >
+                        {{t('activateWith')}} MERCADOPAGO 
+                        <div style='font-weight: 500;' >$5.000 COP </div>
+                    </div>
+                    <div payment-button-logo>
+                        <img style='margin-right:5px;' src="/images/payments/mercadopago-logo.png"  height="45px">
+                    </div>
+                </div>
+                <div payment-button on-click='_goToPaypalPayment'>
+                    <div payment-button-content >
+                        {{t('activateWith')}} PAYPAL 
+                        <div style='font-weight: 500;' >$2.00 USD </div>
+                    </div>
+                    <div payment-button-logo>
+                        <img src="/images/payments/pp258.png"  height="45px">
+                    </div>
+                </div>
+                
+                <!-- <img src="/images/payments/pp258.png" height="50px">
+                <paper-button on-click='_goToPayment'>
+                    {{t('button')}}
+                </paper-button>
+                <paper-button on-click='_goToPaypalPayment'>
+                    paypal
+                </paper-button> -->
+
+            </template> 
+            <template is="dom-if" if="[[!withPaymentURL]]">
+                <div loading>
+                    Cargando ...
+                </div>
+            </template>
+        </div>
+    </template>
+    <script>
+        class UpgradeView extends Polymer.Element {
+            static get is() { return 'upgrade-view'; }
+            static get properties() {return {
+                paymentURL:{type:String},
+                withPaymentURL:{type:Boolean,value:false},
+            }}
+            constructor() {
+                super();
+            }
+            async _enableNotifications() {
+                try {
+                    await messaging.requestPermission() ; 
+                    this.dispatchEvent(new CustomEvent('toast', {detail:{
+                        msg:this.t2('loading')+' ...'
+                    }, bubbles: true, composed: true }));
+                    await messaging.deleteToken(await messaging.getToken()) ;
+                    let token = await messaging.getToken() ; 
+                    app_fcmToken = token ;
+                    let response = await acFetch('/enable-fcm',{fcmToken:token}) ;
+                    let userInfo = ls_get('/userInfo') ; 
+                    userInfo.enabledNotifications = true ; 
+                    ls_set('/userInfo', userInfo) ; 
+                    this.dispatchEvent(new CustomEvent('toast', {detail:{
+                        msg:this.t2('enabledNotifications') 
+                    }, bubbles: true, composed: true }));
+                    ls_set('fcmToken', token) ;
+                }
+                catch (error) {
+                    this.dispatchEvent(new CustomEvent('toast', {detail:{
+                        msg:this.t2('notificationsErrorMessage')
+                    }, bubbles: true, composed: true }));
+                }
+            }
+            async _goToPayment() {
+                localStorage.removeItem('paymentURL') ; 
+                window.open(app_paymentURL);
+                if(ls_get('/userInfo').enabledNotifications) {
+                    try {
+                        await messaging.requestPermission() ; 
+                        await messaging.deleteToken(await messaging.getToken()) ;
+                        let token = await messaging.getToken() ; 
+                        app_fcmToken = token ;
+                        let response = await acFetch('/enable-fcm',{fcmToken:token}) ;
+                        ls_set('fcmToken', token) ;
+                    }
+                    catch (error) {
+                        // console.log(error);
+                    }
+                }
+            }
+            async _goToPaypalPayment() {
+                localStorage.removeItem('paypalPaymentURL') ; 
+                window.location.href = app_paypalPaymentURL;
+                if(ls_get('/userInfo').enabledNotifications) {
+                    try {
+                        await messaging.requestPermission() ; 
+                        await messaging.deleteToken(await messaging.getToken()) ;
+                        let token = await messaging.getToken() ; 
+                        app_fcmToken = token ;
+                        let response = await acFetch('/enable-fcm',{fcmToken:token}) ;
+                        ls_set('fcmToken', token) ;
+                    }
+                    catch (error) {
+                        // console.log(error);
+                    }
+                }
+            }
+            async _setWithPaymentURL (){
+                await paymentURLPromise ; 
+                this.withPaymentURL = true ; 
+                await sleep(1000);
+                this.shadowRoot.querySelector('[info1]').innerHTML = this.t('info1').replace(/-/g, "&shy;"); ;
+                this.shadowRoot.querySelector('[listItem11]').innerHTML = ' <span>-</span> ' + this.t('listItem11').replace(/-/g, "&shy;"); ;
+                this.shadowRoot.querySelector('[listItem12]').innerHTML = ' <span>-</span> ' + this.t('listItem12').replace(/-/g, "&shy;"); ;
+                this.shadowRoot.querySelector('[listItem13]').innerHTML = ' <span>-</span> ' + this.t('listItem13').replace(/-/g, "&shy;"); ;
+                this.shadowRoot.querySelector('[info2]').innerHTML = this.t('info2').replace(/-/g, "&shy;"); ;
+                this.shadowRoot.querySelector('[listItem21]').innerHTML = ' <span>-</span> ' + this.t('listItem21').replace(/-/g, "&shy;"); ;
+                this.shadowRoot.querySelector('[listItem22]').innerHTML = ' <span>-</span> ' + this.t('listItem22').replace(/-/g, "&shy;"); ;
+                this.shadowRoot.querySelector('[listItem23]').innerHTML = ' <span>-</span> ' + this.t('listItem23').replace(/-/g, "&shy;"); ;
+                this.shadowRoot.querySelector('[enableNotifications]').innerHTML = this.t('enableNotifications').replace(/-/g, "&shy;"); ;
+                this.shadowRoot.querySelector('[info3]').innerHTML = this.t('info3').replace(/-/g, "&shy;"); ;
+            }
+            t(c , arg) {
+                return i18next.t('upgradeView.'+c , arg) ; 
+            }
+            t2(c , arg ) {
+                return i18next.t(c , arg) ; 
+            }
+            ready() {
+                super.ready() ;
+                this._setWithPaymentURL(); 
+            }
+        }
+        customElements.define('upgrade-view', UpgradeView);
+    </script>
+</dom-module>
