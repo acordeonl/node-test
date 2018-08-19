@@ -6,6 +6,10 @@ var logger = require('morgan');
 
 var appLogic = require('./routes/v1');
 var main = require('./routes/main');
+var students = require('./routes/data/students');
+var teachers = require('./routes/data/teachers');
+var courses = require('./routes/data/courses');
+
 var session = require('client-sessions') ; 
 var app = express();
 
@@ -55,8 +59,11 @@ app.use( async function(req,res,next){
     }catch(err){return next(err) ; }
 }) ; 
 
-app.use('/', main);
+app.use('/data/students', students);
+app.use('/data/teachers', teachers);
+app.use('/data/courses', courses);
 app.use('/v1', appLogic);
+app.use('/', main);
 
 
 app.use(function (req, res, next) {
@@ -64,7 +71,6 @@ app.use(function (req, res, next) {
     // err.status = 404;
     // next(err);
     res.redirect('/') ;
-    console.log('aja');
 });
 
 // error handler

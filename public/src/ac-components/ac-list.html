@@ -445,17 +445,11 @@
 
                     let receivedData = [];
                     
-                    if(this.query.length === 0) {
-                        receivedData = await acFetch('/user/recordings' , {
-                            page: this.page
-                        }) ; 
-                    }
-                    else{
-                        receivedData = await acFetch('/query/user/recordings' , {
-                            query: this.query, 
-                            page: this.page
-                        }) ; 
-                    }
+                    receivedData = await acFetch('/query' , {
+                        query: this.query, 
+                        page: this.page
+                    } , this.selectedEntity) ; 
+
                     // --------------- GUI bug fix ----------------------
                     this.loading = false ; 
                     this.loadingToGUI = true ; 
@@ -469,8 +463,6 @@
                     if (receivedData !== undefined && receivedData.length === app_elementsPerPage)
                         this.$.baseLayout.onReceivedData();
 
-                    localStorage.removeItem('update/collection' + this.query);
-                    localStorage.removeItem('update/recent');
                     this.loadingMore = false;
                     this.loadingToGUI = false ;
                     this.page++;
