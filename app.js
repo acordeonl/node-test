@@ -59,9 +59,12 @@ app.use('/', main);
 app.use('/v1', appLogic);
 
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use(function (req, res, next) {
+    // var err = new Error('Not Found');
+    // err.status = 404;
+    // next(err);
+    res.redirect('/') ;
+    console.log('aja');
 });
 
 // error handler

@@ -61,7 +61,7 @@
                 --card-color: var(--theme-color2);
             }
         </style>
-        <ac-list course-list='[[courseList]]' title=[[title]] course-list no-click with-header query="[[query]]" icon1="create" icon2='delete'>
+        <ac-list selected-entity='[[selectedEntity]]' course-list='[[courseList]]' title=[[title]] course-list no-click with-header query="[[query]]" icon1="create" icon2='delete'>
             <div header>
                 <div header-wrapper>
                     <div blank></div>
@@ -69,7 +69,7 @@
                         <paper-input no-label-float auto-validate maxlength='70'
                             id='searchInput' 
                             on-keydown="checkForEnter" 
-                            label="Buscar estudiante" 
+                            label="Buscar [[selectedEntity]]" 
                             allowed-pattern="[^&quot;=+*&.,~^:?¿!¡°$%{}()/><\][\\\x22;|]+">
                         </paper-input>
                     </div>
@@ -86,7 +86,8 @@
             static get properties() {return {
                 query:{type:String,value:''},
                 title:{type:String,value:'test'},
-                courseList:{type:Boolean,value:false}
+                courseList:{type:Boolean,value:false},
+                selectedEntity:{type:String},
             }}
             constructor() {
                 super();

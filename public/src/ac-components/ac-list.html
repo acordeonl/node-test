@@ -107,7 +107,7 @@
         </style>
         <dialogs>
             <prompt-dialog with-message id="deleteDialog" confirm-button="eliminar" cancel-button="cancelar"></prompt-dialog>
-            <prompt-dialog dialog-title="Modificar dato" id="editDialog" confirm-button="Modificar" cancel-button="cancelar">
+            <prompt-dialog dialog-title="Modificar [[selectedEntity]]" id="editDialog" confirm-button="Modificar" cancel-button="cancelar">
                 <div content >
                     <edit-card-form 
                         is-course=[[courseList]]
@@ -172,6 +172,7 @@
             }
             static get properties() {
                 return {
+                    selectedEntity:{type:String},
                     loadingToGUI:{type:Boolean,value:false},
                     courseList:{type:Boolean,value:false},
                     noClick:{type:Boolean,value:false},
@@ -202,12 +203,11 @@
             _deleteCard(e) {
                 this.deleteCardId = e.detail.id;
                 this.deleteCardIdIndex = e.detail.index;
-                this.$.deleteDialog.message = '¿Seguro que desea eliminar dato?' ;
+                this.$.deleteDialog.message = '¿Seguro que desea eliminar '+this.selectedEntity+'?' ;
                 this.$.deleteDialog.open();
             }
             _editCard(e) {
                 var txt;
-                console.log(e);
                 this.editCardId = e.detail.id ; 
                 this.editGivenName = e.detail.givenName;
                 this.editCourseName = e.detail.courseName;

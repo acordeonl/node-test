@@ -12,7 +12,6 @@ async function acFetch(url, body, url_base) {
     //     headers: new Headers({'Content-Type': 'application/json'}),
     //     body: JSON.stringify(body)
     // }) ; 
-    console.log(entityType);
     if(entityType === 'person'){
         response = {
             "data": [

@@ -158,9 +158,10 @@
             <paper-icon-button icon='close' on-click="_closeToastPersist"></paper-icon-button>
         </paper-toast>
         <div dialogs>
-            <prompt-dialog dialog-title="Registrar Dato" id="createDialog" confirm-button="Registrar" cancel-button="cancelar">
+            <prompt-dialog dialog-title="Registrar [[selectedEntity]]" id="createDialog" confirm-button="Registrar" cancel-button="cancelar">
                 <div content >
                     <edit-card-form 
+                        selected-entity=[[selectedEntity]]
                         is-course='[[courseList]]'
                         title='test'
                         tags='test1'
@@ -172,13 +173,13 @@
         </div>
         <div wrapper>
             <view-layout position='bottom' height='85vh' width='450px'>
-                <ns-entity course-list=[[courseList]]> </ns-entity>
+                <ns-entity selected-entity='[[selectedEntity]]' course-list=[[courseList]]> </ns-entity>
             </view-layout>
             <div header>
                 <div select-entity>
-                    <paper-button id='studentBtn' class='selected'  on-click='_selectEntity' > Estudiante </paper-button>
-                    <paper-button id='teacherBtn' on-click='_selectEntity'  > Docente </paper-button>
-                    <paper-button id='courseBtn'  on-click='_selectEntity'> Curso </paper-button>
+                    <paper-button id='estudiante' class='selected'  on-click='_selectEntity' > Estudiante </paper-button>
+                    <paper-button id='docente' on-click='_selectEntity'  > Docente </paper-button>
+                    <paper-button id='curso'  on-click='_selectEntity'> Curso </paper-button>
                 </div>
             </div>
             <div footer>
@@ -197,7 +198,7 @@
             static get properties() {return {
                 selectingEntity:{type:Boolean,value:false},
                 courseList:{type:String,value:false},
-                selectedBtn:{type:String,value:'studentBtn'},
+                selectedEntity:{type:String,value:'estudiante'},
             }}
             constructor() {
                 super();
@@ -221,12 +222,12 @@
                 this.$.createDialog.open();
             }
             async _selectEntity(e){
-                if(this.selectingEntity)
+                if(this.selectingEntity || this.selectedEntity === e.currentTarget.id )
                     return ; 
                 this.selectingEntity = true ; 
-                this.shadowRoot.querySelector('#'+this.selectedBtn).classList.remove('selected') ; 
-                this.selectedBtn = e.currentTarget.id ; 
-                if(this.selectedBtn === 'courseBtn'){
+                this.shadowRoot.querySelector('#'+this.selectedEntity).classList.remove('selected') ; 
+                this.selectedEntity = e.currentTarget.id ; 
+                if(this.selectedEntity === 'curso'){
                     this.courseList = true ; 
                     entityType = 'course' ; 
                 }
@@ -234,9 +235,9 @@
                     this.courseList = false ; 
                     entityType = 'person'
                 }
-                this.shadowRoot.querySelector('#'+this.selectedBtn).classList.add('selected') ; 
+                this.shadowRoot.querySelector('#'+this.selectedEntity).classList.add('selected') ; 
                 this.shadowRoot.querySelector('ns-entity')._updateList() ; 
-                await sleep(500);
+                await sleep(1000);
                 this.selectingEntity = false ;
             }
             _closeToastPersist() {
