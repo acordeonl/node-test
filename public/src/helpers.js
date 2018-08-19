@@ -1,15 +1,15 @@
 async function acFetch(url, body, selectedEntity) {
-    let entity ; 
+    let base_url ; 
     if(selectedEntity === 'estudiante')
-        body.entity = 'Students' ;
+        base_url = '/students' ;
     if(selectedEntity === 'docente')
-        body.entity = 'Teachers' ;
+        base_url = '/teachers' ;
     if(selectedEntity === 'curso')
-        body.entity = 'Courses' ;
+        base_url = '/courses' ;
     let response  ; 
     if(url === '/read' && body.query !== undefined && body.query.length === 0) 
         url+='/all' ; 
-    response = await (await fetch('/data'+url, {
+    response = await (await fetch('/v1'+base_url+url, {
         method: 'post',
         credentials: "same-origin",
         headers: new Headers({'Content-Type': 'application/json'}),

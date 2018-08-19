@@ -3,7 +3,7 @@ var router = express.Router();
 
 var fetch = require('node-fetch');
 
-var userAuth = require('../route-helpers/auth');
+var userAuth = require('../../route-helpers/auth');
 var verifyUser = userAuth.verifyUser;
 var elementsPerPage = 10;
 var mongo = require('mongodb');
@@ -12,17 +12,15 @@ var mongo = require('mongodb');
 router.post('/create', verifyUser , async function (req, res, next) {
     let apiResponse,expectedGender,genderProbability ; 
     let checkGender = false ;
-    if(req.body.entity === 'Students' || req.body.entity === 'Teachers'){
-        // use external api
-        apiResponse = await(await fetch('https://api.genderize.io/?name='+req.body.elementData.givenName)).json();
-        expectedGender = (apiResponse.gender === 'male')?"M":"F" ; 
-        genderProbability = apiResponse.probability ; 
-        if(expectedGender !== req.body.elementData.gender && genderProbability > 0.7){
-            checkGender = true ; 
-        }
-    }   
+    // use external api
+    apiResponse = await(await fetch('https://api.genderize.io/?name='+req.body.elementData.givenName)).json();
+    expectedGender = (apiResponse.gender === 'male')?"M":"F" ; 
+    genderProbability = apiResponse.probability ; 
+    if(expectedGender !== req.body.elementData.gender && genderProbability > 0.7){
+        checkGender = true ; 
+    }
     try {
-        await req.db.collection(req.body.entity).insert(req.body.elementData);
+        await req.db.collection('Students').insert(req.body.elementData);
     } catch (err) {
         return next(err);
     }
@@ -35,7 +33,7 @@ router.post('/create', verifyUser , async function (req, res, next) {
 
 router.post('/read/all', verifyUser, async function (req, res, next) {
     try {
-        let docs = await req.db.collection(req.body.entity).find({})
+        let docs = await req.db.collection('Students').find({})
             .skip(elementsPerPage * req.body.page)
             .limit(elementsPerPage).toArray();
         res.json({
@@ -48,7 +46,7 @@ router.post('/read/all', verifyUser, async function (req, res, next) {
 
 router.post('/read', verifyUser, async function (req, res, next) {
     try {
-        let docs = await req.db.collection(req.body.entity).find({
+        let docs = await req.db.collection('Students').find({
                 $text: {
                     $search: req.body.query
                 }
@@ -75,7 +73,7 @@ router.post('/read', verifyUser, async function (req, res, next) {
 
 router.post('/update', verifyUser, async function (req, res, next) {
     try {
-        await req.db.collection(req.body.entity).update({
+        await req.db.collection('Students').update({
             _id: new mongo.ObjectID(req.body.elementId),
         }, {
             $set: req.body.elementData
@@ -91,7 +89,7 @@ router.post('/update', verifyUser, async function (req, res, next) {
 
 router.post('/delete', verifyUser ,async function (req, res, next) {
     try {
-        await req.db.collection(req.body.entity).deleteOne({
+        await req.db.collection('Students').deleteOne({
             _id: new mongo.ObjectID(req.body.elementId)
         });
         res.json({
