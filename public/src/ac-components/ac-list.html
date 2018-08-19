@@ -291,32 +291,33 @@
                         if(e.detail.action === 'confirm' && !this.courseList) { 
                             if(this.editGivenName.length === 0){
                                 this.dispatchEvent(new CustomEvent('toast', {detail:{
-                                    msg:'Por favor ingresa los nombres y vueve a intentar'
+                                    msg:'Por favor ingresa los nombres del '+this.selectedEntity +' y vuelve a intentar'
                                 }, bubbles: true, composed: true }));
                                 this.processingPromptAction = false ;
                                 return ; 
                             }
                             if(this.editFamilyName.length === 0){
                                 this.dispatchEvent(new CustomEvent('toast', {detail:{
-                                    msg:'Por favor ingresa los apellidos y vueve a intentar'
-                                }, bubbles: true, composed: true }));
-                                this.processingPromptAction = false ;
-                                return ; 
-                            }
-                            if(this.editGender.length === 0){
-                                this.dispatchEvent(new CustomEvent('toast', {detail:{
-                                    msg:'Por favor agrega el género y vueve a intentar'
+                                    msg:'Por favor ingresa los apellidos del '+this.selectedEntity +' y vuelve a intentar'
                                 }, bubbles: true, composed: true }));
                                 this.processingPromptAction = false ;
                                 return ; 
                             }
                             if(this.editPersonalId.length === 0){
                                 this.dispatchEvent(new CustomEvent('toast', {detail:{
-                                    msg:'Por favor agrega la identificación y vueve a intentar'
+                                    msg:'Por favor agrega la identificación del '+this.selectedEntity +' y vuelve a intentar'
                                 }, bubbles: true, composed: true }));
                                 this.processingPromptAction = false ;
                                 return ; 
                             }
+                            if(this.editGender.length === 0){
+                                this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                    msg:'Por favor agrega el género del '+this.selectedEntity +' y vuelve a intentar'
+                                }, bubbles: true, composed: true }));
+                                this.processingPromptAction = false ;
+                                return ; 
+                            }
+                            
 
                             // await acFetch('/viewAudio/update',{
                             //     viewAudioId:this.editCardId,
@@ -345,12 +346,23 @@
                             this.loading = false ;
                         } 
                         if(e.detail.action === 'confirm' && this.courseList) { 
-                            console.log(this.editCourseName);
-                            console.log(this.editCourseId);
-                            console.log(this.editObservations);
                             if(this.editCourseName.length === 0){
                                 this.dispatchEvent(new CustomEvent('toast', {detail:{
-                                    msg:'Por favor agrega el nombre y vuelve a intentar'
+                                    msg:'Por favor agrega el nombre del '+this.selectedEntity +' y vuelve a intentar'
+                                }, bubbles: true, composed: true }));
+                                this.processingPromptAction = false ;
+                                return ; 
+                            }
+                            if(this.editCourseId.length === 0){
+                                this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                    msg:'Por favor agrega el código del '+this.selectedEntity +' y vuelve a intentar'
+                                }, bubbles: true, composed: true }));
+                                this.processingPromptAction = false ;
+                                return ; 
+                            }
+                            if(this.editObservations.length === 0){
+                                this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                    msg:'Por favor agrega las observaciones del '+this.selectedEntity +' y vuelve a intentar'
                                 }, bubbles: true, composed: true }));
                                 this.processingPromptAction = false ;
                                 return ; 

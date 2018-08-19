@@ -267,10 +267,75 @@
                     return;
                 this.processingPromptAction = true;
 
-                console.log(this.newGivenName);
-                console.log(this.newFamilyName);
-
-                this.shadowRoot.querySelector('ns-entity')._updateList() ; 
+                if(e.detail.action === 'confirm'){
+                    console.log(this.newCourseName);
+                    console.log(this.newCourseId);
+                    console.log(this.newObservations);
+                    if(!this.courseList){
+                        if(this.newGivenName.length === 0){
+                            this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                msg:'Por favor ingresa los nombres del '+this.selectedEntity +' y vuelve a intentar'
+                            }, bubbles: true, composed: true }));
+                            this.processingPromptAction = false ;
+                            return ; 
+                        }
+                        if(this.newFamilyName.length === 0){
+                            this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                msg:'Por favor ingresa los apellidos del '+this.selectedEntity +' y vuelve a intentar'
+                            }, bubbles: true, composed: true }));
+                            this.processingPromptAction = false ;
+                            return ; 
+                        }
+                        if(this.newPersonalId.length === 0){
+                            this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                msg:'Por favor agrega la identificación del '+this.selectedEntity +' y vuelve a intentar'
+                            }, bubbles: true, composed: true }));
+                            this.processingPromptAction = false ;
+                            return ; 
+                        }
+                        if(this.newGender.length === 0){
+                            this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                msg:'Por favor agrega el género del '+this.selectedEntity +' y vuelve a intentar'
+                            }, bubbles: true, composed: true }));
+                            this.processingPromptAction = false ;
+                            return ; 
+                        }
+                       this.shadowRoot.querySelector('edit-card-form')._cleanFormData() ;
+                    }
+                    else{
+                        if(this.newCourseName.length === 0){
+                            this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                msg:'Por favor agrega el nombre del '+this.selectedEntity +' y vuelve a intentar'
+                            }, bubbles: true, composed: true }));
+                            this.processingPromptAction = false ;
+                            return ; 
+                        }
+                        if(this.newCourseId.length === 0){
+                            this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                msg:'Por favor agrega el código del '+this.selectedEntity +' y vuelve a intentar'
+                            }, bubbles: true, composed: true }));
+                            this.processingPromptAction = false ;
+                            return ; 
+                        }
+                        if(this.newObservations.length === 0){
+                            this.dispatchEvent(new CustomEvent('toast', {detail:{
+                                msg:'Por favor agrega las observaciones del '+this.selectedEntity +' y vuelve a intentar'
+                            }, bubbles: true, composed: true }));
+                            this.processingPromptAction = false ;
+                            return ; 
+                        }
+                        await sleep(500);
+                           this.shadowRoot.querySelector('edit-card-form')._cleanFormData() ;
+                    }
+                        
+                    
+                    
+                    this.dispatchEvent(new CustomEvent('toast', {detail:{
+                        msg:this.selectedEntity.charAt(0).toUpperCase()+this.selectedEntity.substr(1)+' registrado'
+                    }, bubbles: true, composed: true }));
+                    this.shadowRoot.querySelector('ns-entity')._updateList() ; 
+                }
+                
 
                 await sleep(1000);
                 this.processingPromptAction = false;

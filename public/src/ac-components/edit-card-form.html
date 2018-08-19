@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/local-dom/local-dom.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+
 
 <link rel="import" href="../ac-components/ac-tags-input.html" >
 
@@ -45,10 +47,23 @@
                 margin-top:40px ; 
             }
             paper-textarea{
-                font-size: 30px;
+                font-size: 19px;
+                font-weight: 300 ;
                 margin-bottom: 30px ; 
+                
                 --paper-input-container-focus-color: var(--theme-color1)  ; 
-
+                --paper-input-container-color: rgb(185, 185, 185) ; 
+                color:rgb(53, 47, 47) ; 
+                --iron-autogrow-textarea: {
+                    color: rgb(80, 78, 78);
+                    font-size: 20px;
+                    font-weight: 300;
+                };
+                --paper-input-container-label: {
+                    font-size: 19px;
+                    font-weight: 300;
+                    --paper-input-container-color:rgb(128, 118, 118) ;
+                };
             }
             [url-input-wrapper]{
                 @apply --layout-horizontal;
@@ -77,57 +92,57 @@
                     pattern='^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
                     error-message="{{t('emailIsInvalid')}}">  -->
                 <template is="dom-if" if="[[!isCourse]]">
-                    <paper-input auto-validate maxlength='70'
+                    <paper-input auto-validate maxlength='40'
                         upload-dialog-input 
                         label="Nombres" 
                         value="{{givenName}}"
-                        allowed-pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
-                        pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
+                        allowed-pattern="[a-zA-Z ]+"
+                        pattern="[a-zA-Z ]+"
                         error-message="{{t('titleIsInvalid')}}"></paper-input>
-                    <paper-input auto-validate maxlength='70'
+                    <paper-input auto-validate maxlength='40'
                         upload-dialog-input 
                         label="Apellidos" 
                         value="{{familyName}}"
-                        allowed-pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
-                        pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
+                        allowed-pattern="[a-zA-Z ]+"
+                        pattern="[a-zA-Z ]+"
                         error-message="{{t('titleIsInvalid')}}"></paper-input>
-                    <paper-input auto-validate maxlength='70'
+                    <paper-input auto-validate maxlength='20'
                         upload-dialog-input 
                         label="Identificación" 
                         value="{{personalId}}"
-                        allowed-pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
-                        pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
+                        allowed-pattern="[0-9]+"
+                        pattern="[0-9]+"
                         error-message="{{t('titleIsInvalid')}}"></paper-input>
-                    <paper-input auto-validate maxlength='70'
+                    <paper-input auto-validate maxlength='1'
                         upload-dialog-input 
-                        label="Género" 
+                        label="Género (Ingresar M o F)" 
                         value="{{gender}}"
-                        allowed-pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
-                        pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
+                        allowed-pattern="[M|F]"
+                        pattern="[M|F]"
                         error-message="{{t('titleIsInvalid')}}"></paper-input>
                 </template>
                 <template is="dom-if" if="[[isCourse]]">
-                    <paper-input auto-validate maxlength='70'
+                    <paper-input auto-validate maxlength='40'
                         upload-dialog-input 
                         label="Nombre" 
                         value="{{courseName}}"
-                        allowed-pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
-                        pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
+                        allowed-pattern="[a-zA-Z ]+"
+                        pattern="[a-zA-Z ]+"
                         error-message="invalid"></paper-input>
-                    <paper-input auto-validate maxlength='70'
+                    <paper-input auto-validate maxlength='20'
                         upload-dialog-input 
                         label="Código" 
                         value="{{courseId}}"
-                        allowed-pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
-                        pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
+                        allowed-pattern="[a-zA-Z0-9]+"
+                        pattern="[a-zA-Z0-9]+"
                         error-message="invalid"></paper-input>
-                    <paper-input auto-validate maxlength='70'
-                        upload-dialog-input 
-                        label="Observaciones" 
-                        value="{{observations}}"
-                        allowed-pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
-                        pattern="[^;=+*.,~^°$#%{}/><\][\\\x22;|]+"
-                        error-message="invalid"></paper-input>
+                    <paper-textarea 
+                        maxlength='500' 
+                        char-counter
+                         rows='3' 
+                         value={{observations}} 
+                         label="Observaciones">
+                    </paper-textarea>
                 </template>
             </div>
         </local-dom>
@@ -149,10 +164,8 @@
             constructor() {
                 super();
             }
-            async _cleanRecordingInputData() {
-                if(this.isCourse || !this.forUpload)
-                    return ;
-                await cleanUploadRecordingInputDataPromise ; 
+            async _cleanFormData() {
+                // await cleanUploadRecordingInputDataPromise ; 
                 this.set('givenName' ,'') ; 
                 this.set('familyName' ,'') ; 
                 this.set('courseName' ,'') ; 
@@ -160,27 +173,11 @@
                 this.set('personalId' ,'') ; 
                 this.set('observations' ,'') ; 
                 this.set('gender' ,'') ; 
-                cleanUploadRecordingInputDataPromise = new Promise(resolve => cleanUploadRecordingInputDataPromiseR = resolve);
-                this._cleanRecordingInputData() ; 
-            }
-            async _cleanViewAudioInputData(){
-                if(!this.isCourse || !this.forUpload)
-                    return ; 
-                await cleanUploadViewAudioInputDataPromise ; 
-                this.set('givenName' ,'') ; 
-                this.set('familyName' ,'') ; 
-                this.set('personalId' ,'') ; 
-                this.set('courseName' ,'') ; 
-                this.set('courseId' ,'') ; 
-                this.set('observations' ,'') ; 
-                this.set('gender' ,'') ; 
-                cleanUploadViewAudioInputDataPromise = new Promise(resolve => cleanUploadViewAudioInputDataPromiseR = resolve);
-                this._cleanViewAudioInputData() ; 
+                // cleanUploadRecordingInputDataPromise = new Promise(resolve => cleanUploadRecordingInputDataPromiseR = resolve);
             }
             ready() {
                 super.ready() ;
-                this._cleanRecordingInputData() ; 
-                this._cleanViewAudioInputData() ; 
+                this._cleanFormData() ; 
             }
         }
         customElements.define('edit-card-form', EditCardForm);
