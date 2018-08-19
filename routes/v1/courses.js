@@ -16,8 +16,7 @@ router.post('/create', verifyUser , async function (req, res, next) {
         return next(err);
     }
     res.json({
-        data: 'OK',
-        checkGender:checkGender        
+        data: 'OK'
     })
 });
 
