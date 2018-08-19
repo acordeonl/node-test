@@ -4,7 +4,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var appLogic = require('./routes/v1');
 var main = require('./routes/main');
 var data = require('./routes/data');
 
@@ -58,7 +57,6 @@ app.use( async function(req,res,next){
 }) ; 
 
 app.use('/data', data);
-app.use('/v1', appLogic);
 app.use('/', main);
 
 app.use(function (req, res, next) {
