@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+var fetch = require('node-fetch');
+
 var userAuth = require('../route-helpers/auth');
 var verifyUser = userAuth.verifyUser;
 var elementsPerPage = 10;
@@ -8,14 +10,25 @@ var mongo = require('mongodb');
 
 
 router.post('/create', async function (req, res, next) {
-    console.log(req.body.elementData);
+    let apiResponse,expectedGender,genderProbability ; 
+    let checkGender = false ;
+    if(req.body.entity === 'Students' || req.body.entity === 'Teachers'){
+        apiResponse = await(await fetch('https://api.genderize.io/?name='+req.body.elementData.givenName)).json();
+        expectedGender = (apiResponse.gender === 'male')?"M":"F" ; 
+        genderProbability = apiResponse.probability ; 
+        if(expectedGender !== req.body.elementData.gender && genderProbability > 0.7){
+            checkGender = true ; 
+            console.log(checkGender);
+        }
+    }   
     try {
         await req.db.collection(req.body.entity).insert(req.body.elementData);
     } catch (err) {
         return next(err);
     }
     res.json({
-        data: 'OK'
+        data: 'OK',
+        checkGender:checkGender        
     })
 });
 

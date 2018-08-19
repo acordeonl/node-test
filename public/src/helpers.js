@@ -1,13 +1,12 @@
 async function acFetch(url, body, selectedEntity) {
+    let entity ; 
     if(selectedEntity === 'estudiante')
-        selectedEntity = 'Students' ;
+        body.entity = 'Students' ;
     if(selectedEntity === 'docente')
-        selectedEntity = 'Teachers' ;
+        body.entity = 'Teachers' ;
     if(selectedEntity === 'curso')
-        selectedEntity = 'Courses' ;
+        body.entity = 'Courses' ;
     let response  ; 
-    body.entity = selectedEntity ;
-    console.log(body);
     if(url === '/read' && body.query !== undefined && body.query.length === 0) 
         url+='/all' ; 
     response = await (await fetch('/data'+url, {
@@ -15,5 +14,7 @@ async function acFetch(url, body, selectedEntity) {
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify(body)
     })).json(); 
+    if(response.checkGender)
+        alert('Revisa el género ingresado para el '+selectedEntity)
     return response.data;
 }

@@ -297,8 +297,11 @@
                             this.processingPromptAction = false ;
                             return ; 
                         }
-
-                        await acFetch('/create',{
+                        
+                        this.dispatchEvent(new CustomEvent('toast', {detail:{
+                            msg:'Procesando registro ...'
+                        }, bubbles: true, composed: true }));
+                        let response = await acFetch('/create',{
                             elementData:{
                                 givenName:this.newGivenName, 
                                 familyName:this.newFamilyName,
@@ -306,6 +309,8 @@
                                 gender:this.newGender
                             }
                         }, this.selectedEntity) ;
+                        
+                            
                         
                         this.shadowRoot.querySelector('edit-card-form')._cleanFormData() ;
                     }
@@ -332,6 +337,9 @@
                             return ; 
                         }
 
+                        this.dispatchEvent(new CustomEvent('toast', {detail:{
+                            msg:'Procesando registro ...'
+                        }, bubbles: true, composed: true }));
                         await acFetch('/create',{
                             elementData:{
                                 name:this.newCourseName, 
@@ -340,6 +348,7 @@
                             }
                         }, this.selectedEntity) ;
 
+                        
                         this.shadowRoot.querySelector('edit-card-form')._cleanFormData() ;
                     }
                         
