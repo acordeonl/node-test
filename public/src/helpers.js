@@ -11,6 +11,7 @@ async function acFetch(url, body, selectedEntity) {
         url+='/all' ; 
     response = await (await fetch('/data'+url, {
         method: 'post',
+        credentials: "same-origin",
         headers: new Headers({'Content-Type': 'application/json'}),
         body: JSON.stringify(body)
     })).json(); 

@@ -9,10 +9,11 @@ var elementsPerPage = 10;
 var mongo = require('mongodb');
 
 
-router.post('/create', async function (req, res, next) {
+router.post('/create', verifyUser , async function (req, res, next) {
     let apiResponse,expectedGender,genderProbability ; 
     let checkGender = false ;
     if(req.body.entity === 'Students' || req.body.entity === 'Teachers'){
+        // use external api
         apiResponse = await(await fetch('https://api.genderize.io/?name='+req.body.elementData.givenName)).json();
         expectedGender = (apiResponse.gender === 'male')?"M":"F" ; 
         genderProbability = apiResponse.probability ; 
@@ -33,7 +34,7 @@ router.post('/create', async function (req, res, next) {
 });
 
 
-router.post('/read/all', async function (req, res, next) {
+router.post('/read/all', verifyUser, async function (req, res, next) {
     try {
         let docs = await req.db.collection(req.body.entity).find({})
             .skip(elementsPerPage * req.body.page)
@@ -46,7 +47,7 @@ router.post('/read/all', async function (req, res, next) {
     }
 });
 
-router.post('/read', async function (req, res, next) {
+router.post('/read', verifyUser, async function (req, res, next) {
     try {
         let docs = await req.db.collection(req.body.entity).find({
                 $text: {
@@ -73,7 +74,7 @@ router.post('/read', async function (req, res, next) {
     }
 });
 
-router.post('/update', async function (req, res, next) {
+router.post('/update', verifyUser, async function (req, res, next) {
     try {
         await req.db.collection(req.body.entity).update({
             _id: new mongo.ObjectID(req.body.elementId),
@@ -89,7 +90,7 @@ router.post('/update', async function (req, res, next) {
 });
 
 
-router.post('/delete', async function (req, res, next) {
+router.post('/delete', verifyUser ,async function (req, res, next) {
     try {
         await req.db.collection(req.body.entity).deleteOne({
             _id: new mongo.ObjectID(req.body.elementId)
