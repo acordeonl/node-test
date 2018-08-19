@@ -93,8 +93,13 @@
                 super();
             }
             _updateList() {
-                this.$.searchInput.value = '' ;
-                this.shadowRoot.querySelector('ac-list')._updateList() ; 
+                if( this.$.searchInput.value.length === 0){
+                    this.shadowRoot.querySelector('ac-list')._updateList() ; 
+                }
+                else{ 
+                    this.$.searchInput.value = '' ;
+                    this.query = '' ; 
+                }
             }
             _getData() {
                 if(this.$.searchInput.value.length > 0)
