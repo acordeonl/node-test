@@ -10,15 +10,6 @@ var mongo = require('mongodb');
 
 
 router.post('/create', verifyUser , async function (req, res, next) {
-    let apiResponse,expectedGender,genderProbability ; 
-    let checkGender = false ;
-    // use external api
-    apiResponse = await(await fetch('https://api.genderize.io/?name='+req.body.elementData.givenName)).json();
-    expectedGender = (apiResponse.gender === 'male')?"M":"F" ; 
-    genderProbability = apiResponse.probability ; 
-    if(expectedGender !== req.body.elementData.gender && genderProbability > 0.7){
-        checkGender = true ; 
-    }
     try {
         await req.db.collection('Courses').insert(req.body.elementData);
     } catch (err) {
