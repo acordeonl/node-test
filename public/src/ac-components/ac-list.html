@@ -251,6 +251,9 @@
                 this.cardTitle = e.detail.name;
             }
             async _onPromptDialogAction(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                
                 if (this.processingPromptAction)
                     return;
                 this.processingPromptAction = true;

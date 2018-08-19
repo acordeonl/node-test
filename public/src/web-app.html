@@ -161,12 +161,15 @@
             <prompt-dialog dialog-title="Registrar [[selectedEntity]]" id="createDialog" confirm-button="Registrar" cancel-button="cancelar">
                 <div content >
                     <edit-card-form 
-                        selected-entity=[[selectedEntity]]
-                        is-course='[[courseList]]'
-                        title='test'
-                        tags='test1'
-                        description='test2'
-                        license='test4' > 
+                        is-course=[[courseList]]
+                       given-name={{newGivenName}}
+                       course-name={{newCourseName}}
+                       course-id={{newCourseId}}
+                       observations={{newObservations}}
+                       family-name={{newFamilyName}}
+                       personal-id={{newPersonalId}}
+                       gender={{newGender}} 
+                    > 
                     </edit-card-form>    
                 </div>
             </prompt-dialog>
@@ -199,6 +202,14 @@
                 selectingEntity:{type:Boolean,value:false},
                 courseList:{type:String,value:false},
                 selectedEntity:{type:String,value:'estudiante'},
+                processingPromptAction:{type:Boolean,value:false},
+                newGivenName:{type:String,notify:true},
+                newCourseName:{type:String,notify:true},
+                newCourseId:{type:String,notify:true},
+                newFamilyName:{type:String,notify:true},
+                newGender:{type:String,notify:true},
+                newObservations:{type:String,notify:true},
+                newPersonalId:{type:String,notify:true}
             }}
             constructor() {
                 super();
@@ -251,9 +262,23 @@
                     },
                 })
             }
+            async _onPromptDialogAction(e) {
+                if (this.processingPromptAction)
+                    return;
+                this.processingPromptAction = true;
+
+                console.log(this.newGivenName);
+                console.log(this.newFamilyName);
+
+                this.shadowRoot.querySelector('ns-entity')._updateList() ; 
+
+                await sleep(1000);
+                this.processingPromptAction = false;
+            }
             ready() {
                 super.ready() ;
                 this.addEventListener('toast', e => this.openToast(e));
+                this.addEventListener('prompt-dialog-action', e => this._onPromptDialogAction(e));
             }
         }
         customElements.define('web-app', WebApp);
