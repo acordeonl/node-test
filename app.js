@@ -6,9 +6,7 @@ var logger = require('morgan');
 
 var appLogic = require('./routes/v1');
 var main = require('./routes/main');
-var students = require('./routes/data/students');
-var teachers = require('./routes/data/teachers');
-var courses = require('./routes/data/courses');
+var data = require('./routes/data');
 
 var session = require('client-sessions') ; 
 var app = express();
@@ -36,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     cookieName:'session', 
     secret:'4j3kljk43h2k4jh2k42hk42',
-    duration:30*60*1000, 
+    duration:4*30*60*1000, 
 })) ; 
 
 app.use(function (req, res, next) { req.db = mongo_db ; next();})
@@ -59,12 +57,9 @@ app.use( async function(req,res,next){
     }catch(err){return next(err) ; }
 }) ; 
 
-app.use('/data/students', students);
-app.use('/data/teachers', teachers);
-app.use('/data/courses', courses);
+app.use('/data', data);
 app.use('/v1', appLogic);
 app.use('/', main);
-
 
 app.use(function (req, res, next) {
     // var err = new Error('Not Found');

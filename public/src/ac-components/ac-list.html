@@ -260,23 +260,10 @@
 
                 try {
                     if(e.path[0].id === 'deleteDialog')  { 
-                        if(e.detail.action === 'confirm' && !this.courseList){
-                            await acFetch('/viewAudios/update/remove' , {
-                                viewAudioId:this.deleteCardId
-                            }) ; 
-                            let tmp = this.list ; 
-                            this.set('list', []);
-                            for(let i = 0 ; i < tmp.length ; i ++ )
-                                if(tmp[i]._id === this.deleteCardId){
-                                    tmp = tmp.slice(0,i).concat(tmp.slice(i+1,tmp.length)) ; 
-                                    break ;
-                                }
-                            this.set('list', tmp);
-                        }
-                        else if(e.detail.action === 'confirm' && this.courseList){
-                            await acFetch('/recordings/update/remove' , {
-                                recordingId:this.deleteCardId
-                            }) ; 
+                        if(e.detail.action === 'confirm'){
+                            await acFetch('/delete' , {
+                                elementId:this.deleteCardId
+                            } , this.selectedEntity) ; 
                             let tmp = this.list ; 
                             this.set('list', []);
                             for(let i = 0 ; i < tmp.length ; i ++ )
@@ -319,16 +306,15 @@
                             }
                             
 
-                            // await acFetch('/viewAudio/update',{
-                            //     viewAudioId:this.editCardId,
-                            //     viewAudioInfo:{
-                            //         title:this.editGivenName, 
-                            //         description:this.editGender,
-                            //         tags:this.editPersonalId,
-                            //         license:this.editFamilyName,
-                            //         url:this.editUrl
-                            //     }
-                            // }) ;            
+                            await acFetch('/update',{
+                                elementId:this.editCardId,
+                                elementData:{
+                                    givenName:this.editGivenName, 
+                                    familyName:this.editFamilyName,
+                                    personalId:this.editPersonalId,
+                                    gender:this.editGender
+                                }
+                            },this.selectedEntity) ;            
 
                             let tmp = this.list ;
                             this.set('list', []);
@@ -368,15 +354,14 @@
                                 return ; 
                             }
 
-                            // await acFetch('/recording/update',{
-                            //     recordingId:this.editCardId,
-                            //     recordingInfo:{
-                            //         title:this.editGivenName, 
-                            //         description:this.editGender,
-                            //         tags:this.editPersonalId,
-                            //         license:this.editFamilyName
-                            //     }
-                            // }) ;            
+                            await acFetch('/update',{
+                                elementId:this.editCardId,
+                                elementData:{
+                                    name:this.editCourseName, 
+                                    courseId:this.editCourseId,
+                                    observations:this.editObservations
+                                }
+                            }, this.selectedEntity) ;            
 
                             let tmp = this.list ;
                             this.set('list', []);
@@ -406,32 +391,6 @@
                 await sleep(1000);
                 this.processingPromptAction = false;
             }
-            async _addToCollection(e) {
-                try {
-                    await acFetch('/collection/update/add', {
-                        collectionId: e.detail.collectionId,
-                        recordingId: this.selectedCardId
-                    });
-
-                    localStorage.removeItem('/collection' + e.detail.collectionId);
-                    ls_set('update/collection' + e.detail.collectionId, 'updated');
-                    this.dispatchEvent(new CustomEvent('toast', {
-                        detail: {
-                            msg: this.t('addElement' , {element:this.cardTitle , list: e.detail.collectionTitle})
-                        },
-                        bubbles: true,
-                        composed: true
-                    }));
-                }    
-                catch(e){
-                   this.dispatchEvent(new CustomEvent('fetch-error', {detail:{
-                       error:e
-                   }, bubbles: true, composed: true }));
-                   this.loading = false ;
-                   this.loadingMore = false ;
-                } 
-
-            }
             async _getData(e) {
                 await this.contentAttached;
                 try {
@@ -445,9 +404,9 @@
 
                     let receivedData = [];
                     
-                    receivedData = await acFetch('/query' , {
+                    receivedData = await acFetch('/read' , {
                         query: this.query, 
-                        page: this.page
+                        page: this.page,
                     } , this.selectedEntity) ; 
 
                     // --------------- GUI bug fix ----------------------
@@ -543,8 +502,6 @@
                     this.addEventListener('iron-select', e => this._menuAction(e));
                     this.addEventListener('delete-card', e => this._deleteCard(e));
                     this.addEventListener('edit-card', e => this._editCard(e));
-                    this.addEventListener('select-collection', e => this._addToCollection(e));
-                    this.addEventListener('addToCollection', e => this._showCollection(e));
                 });
             }
         }
