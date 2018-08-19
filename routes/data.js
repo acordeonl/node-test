@@ -19,7 +19,6 @@ router.post('/create', verifyUser , async function (req, res, next) {
         genderProbability = apiResponse.probability ; 
         if(expectedGender !== req.body.elementData.gender && genderProbability > 0.7){
             checkGender = true ; 
-            console.log(checkGender);
         }
     }   
     try {

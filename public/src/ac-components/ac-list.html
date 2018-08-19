@@ -427,7 +427,6 @@
                     this.page++;
                 }    
                 catch(e){
-                    console.log(e);
                    this.dispatchEvent(new CustomEvent('fetch-error', {detail:{
                        error:e
                    }, bubbles: true, composed: true }));
