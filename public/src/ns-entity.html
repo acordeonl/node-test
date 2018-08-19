@@ -93,6 +93,7 @@
                 super();
             }
             _updateList() {
+                this.$.searchInput.value = '' ;
                 this.shadowRoot.querySelector('ac-list')._updateList() ; 
             }
             _getData() {
