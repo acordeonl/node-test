@@ -16,6 +16,6 @@ async function acFetch(url, body, selectedEntity) {
         body: JSON.stringify(body)
     })).json(); 
     if(response.checkGender)
-        alert('Revisa el género ingresado para el '+selectedEntity)
+        alert('Es posible que el género ingresado para el '+selectedEntity +' esté equivocado.') ;
     return response.data;
 }
