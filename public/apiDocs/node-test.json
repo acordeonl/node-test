@@ -5,7 +5,7 @@
         "version": "1.0.0",
         "title": "CRUD REST API"
     },
-    "host": "http://li1115-212.members.linode.com",
+    "host": "li1115-212.members.linode.com",
     "basePath": "/v1",
     "tags": [{
             "name": "Estudiante",
