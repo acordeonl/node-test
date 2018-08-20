@@ -301,14 +301,14 @@
                         this.dispatchEvent(new CustomEvent('toast', {detail:{
                             msg:'Procesando registro ...'
                         }, bubbles: true, composed: true }));
-                        let response = await acFetch('/create',{
-                            elementData:{
+                        await acFetch('create', this.selectedEntity ,{
+                            body:{
                                 givenName:this.newGivenName, 
                                 familyName:this.newFamilyName,
                                 personalId:this.newPersonalId,
                                 gender:this.newGender
                             }
-                        }, this.selectedEntity) ;
+                        }) ;
                         
                             
                         
@@ -340,13 +340,13 @@
                         this.dispatchEvent(new CustomEvent('toast', {detail:{
                             msg:'Procesando registro ...'
                         }, bubbles: true, composed: true }));
-                        await acFetch('/create',{
-                            elementData:{
+                        await acFetch('create', this.selectedEntity , {
+                            body:{
                                 name:this.newCourseName, 
                                 courseId:this.newCourseId,
                                 observations:this.newObservations
                             }
-                        }, this.selectedEntity) ;
+                        }) ;
 
                         
                         this.shadowRoot.querySelector('edit-card-form')._cleanFormData() ;

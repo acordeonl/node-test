@@ -6,49 +6,53 @@
         "title": "School REST API"
     },
     "host": "localhost:3000",
-    "basePath": "/data",
+    "basePath": "/v1",
     "tags": [{
-        "name": "CRUD",
-        "description": "Registra, consulta, modifica y elimina entidades",
-    }],
+            "name": "Estudiante",
+            "description": " Estudiante de la institución educativa"
+        }, {
+            "name": "Docente",
+            "description": "Docente en la institución educativa"
+        },
+        {
+            "name": "Curso",
+            "description": "Curso ofrecido por la institución educativa"
+        }
+    ],
     "schemes": ["http"],
     "paths": {
-        "/create": {
+        "/students": {
             "post": {
-                "tags": ["CRUD"],
-                "summary": "Registra una nueva entidad al sistema de información",
+                "tags": ["Estudiante"],
+                "summary": "Registra un nuevo estudiante al sistema de información",
                 "description": "",
-                "operationId": "createEntity",
+                "operationId": "createStudent",
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
                 "parameters": [{
-                    "name": "entity",
                     "in": "body",
-                    "description": "Entidad que se desea registrar",
-                    "required": true,
-                    "items": {
-                        "type": "string",
-                        "enum": ["Students", "Teachers", "Courses"]
-                    }
-                },{
-                    "name": "elementData",
-                    "in": "body",
-                    "type":"object",
-                    "description": "Objeto representando la entidad a registrar",
+                    "name": "body",
+                    "description": "Datos de estudiante a registrar",
                     "required": true,
                     "schema": {
-                        "$ref": "#/definitions/Order"
+                        "$ref": "#/definitions/Student"
                     }
                 }],
                 "responses": {
-                    "405": {
-                        "description": "Invalid input"
+                    "200": {
+                        "description": "Registro exitoso",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "checkGender": {
+                                    "type": "boolean",
+                                    "description": "Determina si es necesario revisar el género ingresado"
+                                }
+                            }
+                        }
                     }
-                },
-                "security": [{
-                    "petstore_auth": ["write:pets", "read:pets"]
-                }]
-            },
+                }
+            }
         },
         "/pet/findByStatus": {
             "get": {

@@ -261,9 +261,9 @@
                 try {
                     if(e.path[0].id === 'deleteDialog')  { 
                         if(e.detail.action === 'confirm'){
-                            await acFetch('/delete' , {
-                                elementId:this.deleteCardId
-                            } , this.selectedEntity) ; 
+                            await acFetch('delete' , this.selectedEntity , {
+                                entityId:this.deleteCardId
+                            } ) ; 
                             let tmp = this.list ; 
                             this.set('list', []);
                             for(let i = 0 ; i < tmp.length ; i ++ )
@@ -306,15 +306,15 @@
                             }
                             
 
-                            await acFetch('/update',{
-                                elementId:this.editCardId,
-                                elementData:{
+                            await acFetch('update', this.selectedEntity , {
+                                entityId:this.editCardId,
+                                body:{
                                     givenName:this.editGivenName, 
                                     familyName:this.editFamilyName,
                                     personalId:this.editPersonalId,
                                     gender:this.editGender
                                 }
-                            },this.selectedEntity) ;            
+                            }) ;            
 
                             let tmp = this.list ;
                             this.set('list', []);
@@ -354,14 +354,14 @@
                                 return ; 
                             }
 
-                            await acFetch('/update',{
-                                elementId:this.editCardId,
-                                elementData:{
+                            await acFetch('update', this.selectedEntity , {
+                                entityId:this.editCardId,
+                                body:{
                                     name:this.editCourseName, 
                                     courseId:this.editCourseId,
                                     observations:this.editObservations
                                 }
-                            }, this.selectedEntity) ;            
+                            }) ;            
 
                             let tmp = this.list ;
                             this.set('list', []);
@@ -404,10 +404,10 @@
 
                     let receivedData = [];
                     
-                    receivedData = await acFetch('/read' , {
+                    receivedData = await acFetch('read' , this.selectedEntity, {
                         query: this.query, 
                         page: this.page,
-                    } , this.selectedEntity) ; 
+                    } ) ; 
 
                     // --------------- GUI bug fix ----------------------
                     this.loading = false ; 

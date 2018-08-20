@@ -9,46 +9,36 @@ var elementsPerPage = 10;
 var mongo = require('mongodb');
 
 
-router.post('/create', verifyUser , async function (req, res, next) {
+router.post('', verifyUser , async function (req, res, next) {
     let apiResponse,expectedGender,genderProbability ; 
     let checkGender = false ;
     // use external api
-    apiResponse = await(await fetch('https://api.genderize.io/?name='+req.body.elementData.givenName)).json();
+    apiResponse = await(await fetch('https://api.genderize.io/?name='+req.body.givenName)).json();
     expectedGender = (apiResponse.gender === 'male')?"M":"F" ; 
     genderProbability = apiResponse.probability ; 
-    if(expectedGender !== req.body.elementData.gender && genderProbability > 0.7){
+    if(expectedGender !== req.body.gender && genderProbability > 0.7){
         checkGender = true ; 
     }
     try {
-        await req.db.collection('Teachers').insert(req.body.elementData);
+        await req.db.collection('Teachers').insert(req.body);
     } catch (err) {
         return next(err);
     }
     res.json({
-        data: 'OK',
         checkGender:checkGender        
     })
 });
 
-
-router.post('/read/all', verifyUser, async function (req, res, next) {
+router.get('', verifyUser, async function (req, res, next) {
     try {
-        let docs = await req.db.collection('Teachers').find({})
-            .skip(elementsPerPage * req.body.page)
-            .limit(elementsPerPage).toArray();
-        res.json({
-            data: docs
-        });
-    } catch (err) {
-        return next(err);
-    }
-});
-
-router.post('/read', verifyUser, async function (req, res, next) {
-    try {
-        let docs = await req.db.collection('Teachers').find({
+        var page = req.query.page ; 
+        if(page === undefined)
+            page = 0 ; 
+        let query = req.query.query ; 
+        if(query !== undefined){
+            let docs = await req.db.collection('Teachers').find({
                 $text: {
-                    $search: req.body.query
+                    $search: query
                 }
             })
             .project({
@@ -61,40 +51,44 @@ router.post('/read', verifyUser, async function (req, res, next) {
                     $meta: "textScore"
                 }
             })
-            .skip(elementsPerPage * req.body.page)
+            .skip(elementsPerPage * page)
             .limit(elementsPerPage).toArray();
-        res.json({
-            data: docs
-        });
+
+            res.json(docs);
+        }
+        else{
+            let docs = await req.db.collection('Teachers').find({})
+                .skip(elementsPerPage * page)
+                .limit(elementsPerPage).toArray();
+            res.json(docs);
+        }
     } catch (err) {
         return next(err);
     }
 });
 
-router.post('/update', verifyUser, async function (req, res, next) {
+router.put('/:teacherID', verifyUser, async function (req, res, next) {
+    var teacherID = req.params.teacherID ;
     try {
         await req.db.collection('Teachers').update({
-            _id: new mongo.ObjectID(req.body.elementId),
+            _id: new mongo.ObjectID(teacherID),
         }, {
-            $set: req.body.elementData
+            $set: req.body
         });
-        res.json({
-            data: 'OK'
-        });
+        res.send(200) ; 
     } catch (err) {
         return next(err);
     }
 });
 
 
-router.post('/delete', verifyUser ,async function (req, res, next) {
+router.delete('/:teacherID', verifyUser ,async function (req, res, next) {
+    var teacherID = req.params.teacherID ;
     try {
         await req.db.collection('Teachers').deleteOne({
-            _id: new mongo.ObjectID(req.body.elementId)
+            _id: new mongo.ObjectID(teacherID)
         });
-        res.json({
-            data: 'OK'
-        });
+        res.send(200) ; 
     } catch (err) {
         return next(err);
     }
