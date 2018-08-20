@@ -1,9 +1,9 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "El API permitirá registrar, consultar, modificar y eliminar datos del sistema de información de la  Institución Educativa. Las funcionalidades estarán asociadas a las entidades de Estudiante, Docente y Curso.",
+        "description": "El API permite registrar, consultar, modificar y eliminar datos del sistema de información de la  Institución Educativa. Las funcionalidades estarán asociadas a las entidades de Estudiante, Docente y Curso.",
         "version": "1.0.0",
-        "title": "School REST API"
+        "title": "CRUD REST API"
     },
     "host": "localhost:3000",
     "basePath": "/v1",
@@ -25,7 +25,7 @@
             "post": {
                 "tags": ["Estudiante"],
                 "summary": "Registra un nuevo estudiante al sistema de información",
-                "description": "",
+                "description": "Al registrar un nuevo estudiante se consulta el api externo api.genderize.io para verificar que el género y los nombres ingresados son coherentes. Se envia el resultado en la respuesta con el fin de que el administrador revise posibles errores al ingresar los datos del estudiante",
                 "operationId": "createStudent",
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
@@ -35,12 +35,12 @@
                     "description": "Datos de estudiante a registrar",
                     "required": true,
                     "schema": {
-                        "$ref": "#/definitions/Student"
+                        "$ref": "#/definitions/Estudiante"
                     }
                 }],
                 "responses": {
                      "200": {
-                        "description": "Registro exitoso",
+                        "description": "Objeto con atributo checkGender calculado usando api.genderize.io (determina si es necesario revisar el género ingresado)",
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -52,230 +52,295 @@
                         }
                     }
                 }
-            }
-        },
-        "/pet/findByStatus": {
-            "get": {
-                "tags": ["pet"],
-                "summary": "Finds Pets by status",
-                "description": "Multiple status values can be provided with comma separated strings",
-                "operationId": "findPetsByStatus",
-                "produces": ["application/xml", "application/json"],
-                "parameters": [{
-                    "name": "status",
-                    "in": "query",
-                    "description": "Status values that need to be considered for filter",
-                    "required": true,
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "enum": ["available", "pending", "sold"],
-                        "default": "available"
-                    },
-                    "collectionFormat": "multi"
-                }],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Pet"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid status value"
-                    }
-                },
-                "security": [{
-                    "petstore_auth": ["write:pets", "read:pets"]
-                }]
-            }
-        },
-        "/pet/findByTags": {
-            "get": {
-                "tags": ["pet"],
-                "summary": "Finds Pets by tags",
-                "description": "Muliple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.",
-                "operationId": "findPetsByTags",
-                "produces": ["application/xml", "application/json"],
-                "parameters": [{
-                    "name": "tags",
-                    "in": "query",
-                    "description": "Tags to filter by",
-                    "required": true,
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "collectionFormat": "multi"
-                }],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Pet"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid tag value"
-                    }
-                },
-                "security": [{
-                    "petstore_auth": ["write:pets", "read:pets"]
-                }],
-                "deprecated": true
-            }
-        },
-        "/pet/{petId}": {
-            "get": {
-                "tags": ["pet"],
-                "summary": "Find pet by ID",
-                "description": "Returns a single pet",
-                "operationId": "getPetById",
-                "produces": ["application/xml", "application/json"],
-                "parameters": [{
-                    "name": "petId",
-                    "in": "path",
-                    "description": "ID of pet to return",
-                    "required": true,
-                    "type": "integer",
-                    "format": "int64"
-                }],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "schema": {
-                            "$ref": "#/definitions/Pet"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid ID supplied"
-                    },
-                    "404": {
-                        "description": "Pet not found"
-                    }
-                },
-                "security": [{
-                    "api_key": []
-                }]
             },
-            "post": {
-                "tags": ["pet"],
-                "summary": "Updates a pet in the store with form data",
-                "description": "",
-                "operationId": "updatePetWithForm",
-                "consumes": ["application/x-www-form-urlencoded"],
-                "produces": ["application/xml", "application/json"],
-                "parameters": [{
-                    "name": "petId",
-                    "in": "path",
-                    "description": "ID of pet that needs to be updated",
-                    "required": true,
-                    "type": "integer",
-                    "format": "int64"
-                }, {
-                    "name": "name",
-                    "in": "formData",
-                    "description": "Updated name of the pet",
-                    "required": false,
-                    "type": "string"
-                }, {
-                    "name": "status",
-                    "in": "formData",
-                    "description": "Updated status of the pet",
-                    "required": false,
-                    "type": "string"
-                }],
-                "responses": {
-                    "405": {
-                        "description": "Invalid input"
-                    }
-                },
-                "security": [{
-                    "petstore_auth": ["write:pets", "read:pets"]
-                }]
-            },
-            "delete": {
-                "tags": ["pet"],
-                "summary": "Deletes a pet",
-                "description": "",
-                "operationId": "deletePet",
-                "produces": ["application/xml", "application/json"],
-                "parameters": [{
-                    "name": "api_key",
-                    "in": "header",
-                    "required": false,
-                    "type": "string"
-                }, {
-                    "name": "petId",
-                    "in": "path",
-                    "description": "Pet id to delete",
-                    "required": true,
-                    "type": "integer",
-                    "format": "int64"
-                }],
-                "responses": {
-                    "400": {
-                        "description": "Invalid ID supplied"
-                    },
-                    "404": {
-                        "description": "Pet not found"
-                    }
-                },
-                "security": [{
-                    "petstore_auth": ["write:pets", "read:pets"]
-                }]
-            }
-        },
-        "/pet/{petId}/uploadImage": {
-            "post": {
-                "tags": ["pet"],
-                "summary": "uploads an image",
-                "description": "",
-                "operationId": "uploadFile",
-                "consumes": ["multipart/form-data"],
+            "get": {
+                "tags": ["Estudiante"],
+                "summary": "Consulta estudiantes en el sistema de información",
+                "description": "Se consultará la lista de todos los estudiantes en caso de no especificar un texto asociado a la consulta. La lista de estudiantes serán paginados con un máximo de 10 elementos por página",
+                "operationId": "getStudent",
                 "produces": ["application/json"],
                 "parameters": [{
-                    "name": "petId",
+                    "name": "query",
+                    "in": "query",
+                    "description": "Texto asociado a la consulta de un estudiante.",
+                    "type": "string"
+                },{
+                    "name": "page",
+                    "in": "query",
+                    "description": "Numero de pagina asociada a la paginación de la lista de resultados",
+                    "type": "integer"
+                }],
+                "responses": {
+                   "200": {
+                       "description": "Lista de estudiantes asociados a la consulta",
+                       "schema": {
+                           "type": "array",
+                           "items": {
+                               "$ref": "#/definitions/Estudiante"
+                           }
+                       }
+                   }
+                }
+            }
+        },
+        "/students/{studentID}":{   
+            "put": {
+                "tags": ["Estudiante"],
+                "summary": "Modifica los datos de un estudiante",
+                "description": "",
+                "operationId": "updateStudent",
+                "consumes": ["application/json"],
+                "parameters": [{
+                    "name": "studentID",
                     "in": "path",
-                    "description": "ID of pet to update",
+                    "description": "Identificador de MongoDB asociado al estudiante",
                     "required": true,
-                    "type": "integer",
-                    "format": "int64"
-                }, {
-                    "name": "additionalMetadata",
-                    "in": "formData",
-                    "description": "Additional data to pass to server",
-                    "required": false,
                     "type": "string"
                 }, {
-                    "name": "file",
-                    "in": "formData",
-                    "description": "file to upload",
-                    "required": false,
-                    "type": "file"
+                    "in": "body",
+                    "name": "body",
+                    "description": "Objeto con los nuevos datos del estudiante",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Estudiante"
+                    }
                 }],
                 "responses": {
                     "200": {
-                        "description": "successful operation",
+                        "description": "Se han modificado los datos del estudiante"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Estudiante"],
+                "summary": "Elimina los datos de un estudiante",
+                "description": "",
+                "operationId": "deleteStudent",
+                "parameters": [{
+                    "name": "studentID",
+                    "in": "path",
+                    "description": "Identificador de MongoDB asociado al estudiante",
+                    "required": true,
+                    "type": "string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Se han eliminado los datos del estudiante"
+                    }
+                }
+            }
+        },
+        "/teachers": {
+            "post": {
+                "tags": ["Docente"],
+                "summary": "Registra un nuevo docente al sistema de información",
+                "description": "Al registrar un nuevo docente se consulta el api externo api.genderize.io para verificar que el género y los nombres ingresados son coherentes. Se envia el resultado en la respuesta con el fin de que el administrador revise posibles errores al ingresar los datos del docente",
+                "operationId": "createTeacher",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Datos de docente a registrar",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Docente"
+                    }
+                }],
+                "responses": {
+                     "200": {
+                        "description": "Objeto con atributo checkGender calculado usando api.genderize.io (determina si es necesario revisar el género ingresado)",
                         "schema": {
-                            "$ref": "#/definitions/ApiResponse"
+                            "type": "object",
+                            "properties": {
+                                "checkGender": {
+                                    "type": "boolean",
+                                    "description": "Determina si es necesario revisar el género ingresado"
+                                }
+                            }
                         }
                     }
-                },
-                "security": [{
-                    "petstore_auth": ["write:pets", "read:pets"]
-                }]
+                }
+            },
+            "get": {
+                "tags": ["Docente"],
+                "summary": "Consulta docentes en el sistema de información",
+                "description": "Se consultará la lista de todos los docentes en caso de no especificar un texto asociado a la consulta. La lista de docentes serán paginados con un máximo de 10 elementos por página",
+                "operationId": "getTeacher",
+                "produces": ["application/json"],
+                "parameters": [{
+                    "name": "query",
+                    "in": "query",
+                    "description": "Texto asociado a la consulta de un docente.",
+                    "type": "string"
+                },{
+                    "name": "page",
+                    "in": "query",
+                    "description": "Numero de pagina asociada a la paginación de la lista de resultados",
+                    "type": "integer"
+                }],
+                "responses": {
+                   "200": {
+                       "description": "Lista de docentes asociados a la consulta",
+                       "schema": {
+                           "type": "array",
+                           "items": {
+                               "$ref": "#/definitions/Docente"
+                           }
+                       }
+                   }
+                }
+            }
+        },
+        "/teachers/{teacherID}":{   
+            "put": {
+                "tags": ["Docente"],
+                "summary": "Modifica los datos de un docente",
+                "description": "",
+                "operationId": "updateTeacher",
+                "consumes": ["application/json"],
+                "parameters": [{
+                    "name": "teacherID",
+                    "in": "path",
+                    "description": "Identificador de MongoDB asociado al docente",
+                    "required": true,
+                    "type": "string"
+                }, {
+                    "in": "body",
+                    "name": "body",
+                    "description": "Objeto con los nuevos datos del docente",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Docente"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Se han modificado los datos del docente"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Docente"],
+                "summary": "Elimina los datos de un docente",
+                "description": "",
+                "operationId": "deleteTeacher",
+                "parameters": [{
+                    "name": "teacherID",
+                    "in": "path",
+                    "description": "Identificador de MongoDB asociado al docente",
+                    "required": true,
+                    "type": "string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Se han eliminado los datos del docente"
+                    }
+                }
+            }
+        },
+        "/courses": {
+            "post": {
+                "tags": ["Curso"],
+                "summary": "Registra un nuevo curso al sistema de información",
+                "description": "",
+                "operationId": "createCourse",
+                "consumes": ["application/json"],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "Datos de curso a registrar",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Curso"
+                    }
+                }],
+                "responses": {
+                     "200": {
+                        "description": "Se ha registrado un nuevo curso"
+                    }
+                }
+            },
+            "get": {
+                "tags": ["Curso"],
+                "summary": "Consulta cursos en el sistema de información",
+                "description": "Se consultará la lista de todos los cursos en caso de no especificar un texto asociado a la consulta. La lista de cursos serán paginados con un máximo de 10 elementos por página",
+                "operationId": "getCourse",
+                "produces": ["application/json"],
+                "parameters": [{
+                    "name": "query",
+                    "in": "query",
+                    "description": "Texto asociado a la consulta de un curso",
+                    "type": "string"
+                },{
+                    "name": "page",
+                    "in": "query",
+                    "description": "Numero de pagina asociada a la paginación de la lista de resultados",
+                    "type": "integer"
+                }],
+                "responses": {
+                   "200": {
+                       "description": "Lista de cursos asociados a la consulta",
+                       "schema": {
+                           "type": "array",
+                           "items": {
+                               "$ref": "#/definitions/Curso"
+                           }
+                       }
+                   }
+                }
+            }
+        },
+        "/courses/{courseID}":{   
+            "put": {
+                "tags": ["Curso"],
+                "summary": "Modifica los datos de un curso",
+                "description": "",
+                "operationId": "updateCourse",
+                "consumes": ["application/json"],
+                "parameters": [{
+                    "name": "courseID",
+                    "in": "path",
+                    "description": "Identificador de MongoDB asociado al curso",
+                    "required": true,
+                    "type": "string"
+                }, {
+                    "in": "body",
+                    "name": "body",
+                    "description": "Objeto con los nuevos datos del curso",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/Curso"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Se han modificado los datos del curso"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Curso"],
+                "summary": "Elimina los datos de un curso",
+                "description": "",
+                "operationId": "deleteCourse",
+                "parameters": [{
+                    "name": "courseID",
+                    "in": "path",
+                    "description": "Identificador de MongoDB asociado al curso",
+                    "required": true,
+                    "type": "string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Se han eliminado los datos del curso"
+                    }
+                }
             }
         }
     },
     "definitions": {
-        "Student": {
+        "Estudiante": {
             "type": "object",
             "properties": {
                 "givenName": {
@@ -296,7 +361,7 @@
                 }
             }
         },
-        "Teacher": {
+        "Docente": {
             "type": "object",
             "properties": {
                 "givenName": {
@@ -317,7 +382,7 @@
                 }
             }
         },
-        "Course": {
+        "Curso": {
             "type": "object",
             "properties": {
                 "name": {
@@ -336,7 +401,7 @@
         }
     },
     "externalDocs": {
-        "description": "App Demo",
+        "description": "App Demo (USUARIO: admin CONTRASEÑA: pass)",
         "url": "http://li1115-212.members.linode.com"
     }
 }
