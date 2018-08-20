@@ -5,7 +5,7 @@
         "version": "1.0.0",
         "title": "CRUD REST API"
     },
-    "host": "localhost:3000",
+    "host": "localhost",
     "basePath": "/v1",
     "tags": [{
             "name": "Estudiante",
