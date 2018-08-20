@@ -39,7 +39,7 @@
                     }
                 }],
                 "responses": {
-                    "200": {
+                     "200": {
                         "description": "Registro exitoso",
                         "schema": {
                             "type": "object",

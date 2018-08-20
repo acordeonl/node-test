@@ -5,9 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var main = require('./routes/main');
-var students = require('./routes/v1/students');
-var teachers = require('./routes/v1/teachers');
-var courses = require('./routes/v1/courses');
+var CRUD_API_V1 = require('./routes/v1/CRUD_API');
 
 var session = require('client-sessions');
 var app = express();
@@ -71,9 +69,7 @@ app.use(async function (req, res, next) {
     }
 });
 
-app.use('/v1/students', students);
-app.use('/v1/teachers', teachers);
-app.use('/v1/courses', courses);
+app.use('/v1', CRUD_API_V1);
 app.use('/', main);
 
 app.use(function (req, res, next) {
